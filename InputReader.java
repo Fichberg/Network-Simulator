@@ -5,14 +5,14 @@ import java.util.regex.*;
 
 public class InputReader
 {
-	//ArrayList<Host> hosts;                          //Coloca um objeto do tipo host na lista de hosts
-	//ArrayList<Router> routers;                      //Coloca um objeto do tipo router na lista de routers
+	ArrayList<Host> hosts;                          //Coloca um objeto do tipo host na lista de hosts
+	ArrayList<Router> routers;                      //Coloca um objeto do tipo router na lista de routers
 
 	//Construtor
 	public InputReader(String file_name)
 	{
-		//this.hosts = new ArrayList<Integer>();
-		//this.routers = new ArrayList<Integer>();
+		this.hosts = new ArrayList<Host>();
+		this.routers = new ArrayList<Router>();
 		read_input(file_name);
 	}
 
@@ -73,37 +73,118 @@ public class InputReader
 		return Integer.parseInt(line.substring(number_starting_index, number_ending_index + 1));
 	}
 	
-	//checa se a linha e de servidor. Se sim, o adiciona a hosts_array e retorna true. Caso contrario, retorna false
+	//checa se a linha e de router. Se sim, o adiciona a routers e retorna true. Caso contrario, retorna false
 	boolean get_router_from_line(String line)
 	{
 		Pattern p = Pattern.compile("(set r)+[0-9]+ \\[\\$simulator router [0-9]+\\]+$");
     	Matcher m = p.matcher(line);
     	if(m.matches())
     	{
-    		System.out.println("AQUI ROUTER " + get_number_from_line(line, 5) + ": " + line + " com " + get_number_from_line(line, 26) + " interfaces");
-    		//TODO: Adicionar um objeto do tipo Router na lista de Routers aqui. User a chamada get_number_from_line(line, 5) e para isso
+    		int router_id, router_interfaces;
+
+    		router_id = get_number_from_line(line, 5);
+    		router_interfaces = get_number_from_line(line, 26);
+    		//Coloca o primeiro elemento do tipo Router
+    		if(routers.isEmpty())
+    			routers.add(new Router(router_id, router_interfaces));
+    		//Checa se já existe um router com este id. Caso sim, avisa sobre o erro de entrada e encerra o programa (os identificadores devem ser unicos). 
+    		//Caso não, adiciona o elemento na lista e prossegue normalmente
+    		else
+    		{
+    			if(!check_id_availability('R', router_id))
+    				non_unique_id_input_error('R', router_id);
+    			else
+    				routers.add(new Router(router_id, router_interfaces));
+    		}
     		return true;
     	}
     	return false;
 	}
 	
-	//checa se a linha e de servidor. Se sim, o adiciona a hosts_array e retorna true. Caso contrario, retorna false
+	//checa se a linha e de host. Se sim, o adiciona a hosts e retorna true. Caso contrario, retorna false
 	boolean get_host_from_line(String line)
 	{
 		Pattern p = Pattern.compile("(set h)+[0-9]+ \\[\\$simulator host\\]+$");
     	Matcher m = p.matcher(line);
     	if(m.matches())
     	{
-    		System.out.println("AQUI HOST " + get_number_from_line(line, 5) + ": " + line);
-    		//TODO: Adicionar um objeto do tipo Host na lista de Hosts aqui. User a chamada get_number_from_line(line, 5) para isso
+    		int host_id;
+
+    		host_id = get_number_from_line(line, 5);
+    		//Coloca o primeiro elemento do tipo Host
+    		if(hosts.isEmpty())
+    			hosts.add(new Host(host_id));
+    		//Checa se já existe um host com este id. Caso sim, avisa sobre o erro de entrada e encerra o programa (os identificadores devem ser unicos). 
+    		//Caso não, adiciona o elemento na lista e prossegue normalmente
+    		else
+    		{
+    			if(!check_id_availability('H', host_id))
+    				non_unique_id_input_error('H', host_id);
+    			else
+    				hosts.add(new Host(host_id));
+    		}
     		return true;
     	}
     	return false;
+	}
+
+	//o identificador deve ser único para um host ou um router
+	boolean check_id_availability(char type, int id)
+	{
+		if(type == 'H')
+		{
+			for(Host h : hosts) 
+				if(h.get_id() == id) return false;
+		}
+		if(type == 'R')
+		{
+			for(Router r : routers) 
+				if(r.get_id() == id) return false;
+		}
+		return true;
 	}
 
 	//retorna o file_name com o seu path
 	String file_name_with_path(String file_name)
 	{
 		return System.getProperty("user.dir") + "/inputs/" + file_name;
+	}
+	//notifica o erro de id não único no arquivo de entrada e encerra o programa
+	void non_unique_id_input_error(char type, int id)
+	{
+		//Host
+		if(type == 'H')
+			System.out.println("Input error: duplicated host id " + id);
+		//Router
+		if(type == 'R')
+			System.out.println("Input error: duplicated router id " + id);
+		//encerra
+		System.exit(-1);
+	}
+
+
+
+
+
+
+
+	//DEBUG! Todas as funcoes que estiverem daqui para baixo nao fazem parte da entrega e deverao ser apagadas!
+	void print_lists()
+	{
+		if(hosts.isEmpty())
+			System.out.println("Hosts: Empty");
+		else
+		{
+			for(Host h : hosts)
+				System.out.println("Host"+h.get_id());
+		}
+
+		if(routers.isEmpty())
+			System.out.println("Routers: Empty");
+		else
+		{
+			for(Router r : routers)
+				System.out.println("Router"+r.get_id()+" with " +r.get_interfaces()+ " interfaces.");
+		}
 	}
 }

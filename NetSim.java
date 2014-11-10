@@ -26,7 +26,7 @@ public class NetSim
 	}
 	static void invalid_argument_notification()
 	{
-		System.out.println("Argumento invalido. Uso:\n\njava NetSim <filename.txt>\n\nOnde filename e um txt que possui as configuracoes dos componentes da rede.");
+		System.out.println("Invalid argument. Use:\n\njava NetSim <filename.txt>\n\nWhere filename is a .txt with the settings of the network components.");
 		System.exit(-1);
 	}
 }

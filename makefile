@@ -6,7 +6,9 @@ JC = javac
 
 CLASSES = \
         NetSim.java \
-		InputReader.java
+		InputReader.java \
+		Host.java \
+		Router.java
 
 default: classes
 

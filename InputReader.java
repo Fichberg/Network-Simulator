@@ -90,11 +90,69 @@ public class InputReader
    			mbps_capacity = get_number_from_line(line.substring(0, line.lastIndexOf(' ')), line.substring(0, line.lastIndexOf(' ')).lastIndexOf(' ') + 1);
     		latency = get_number_from_line(line, line.lastIndexOf(' ') + 1);
 
+    		//Os hosts/routers precisam estar na lista
+    		if(!check_points_availability(point_A, point_B))
+    			not_defined_duplex_link_points_error(point_A, point_B, line);
+
     		//Insere na lista
     		duplex_links.add(new DuplexLink(point_A, point_B, mbps_capacity, latency));
     		return true;
     	}
     	return false;
+	}
+
+	//checa se os pontos existem de fato para que este link exista
+	boolean check_points_availability(String point_A, String point_B)
+	{
+		int point_A_id, point_B_id;
+		if(point_A.charAt(0) == 'h')
+			point_A_id = Integer.parseInt(point_A.substring(1));
+		else
+			point_A_id = Integer.parseInt(point_A.substring(1).substring(0, point_A.substring(1).indexOf('.')));
+		if(point_B.charAt(0) == 'h')
+			point_B_id = Integer.parseInt(point_B.substring(1));
+		else
+			point_B_id = Integer.parseInt(point_B.substring(1).substring(0, point_B.substring(1).indexOf('.')));
+
+		boolean have_A = false, have_B = false;
+
+		if(point_A.charAt(0) == 'h' && !hosts.isEmpty())
+		{
+			for(Host h : hosts) 
+				if(h.get_id() == point_A_id) 
+				{
+					have_A = true;
+					break;
+				}
+		}
+		else if(point_A.charAt(0) == 'r' && !routers.isEmpty())
+		{
+			for(Router r : routers) 
+				if(r.get_id() == point_A_id)
+				{
+					have_A = true;
+					break;
+				}
+		}
+		if(point_B.charAt(0) == 'h'  && !hosts.isEmpty())
+		{
+			for(Host h : hosts) 
+				if(h.get_id() == point_B_id) 
+				{
+					have_B = true;
+					break;
+				}
+		}
+		else if(point_B.charAt(0) == 'r' && !routers.isEmpty())
+		{
+			for(Router r : routers) 
+				if(r.get_id() == point_B_id)
+				{
+					have_B = true;
+					break;
+				}
+		}
+		return have_A && have_B;
 	}
 
 	//retorna uma substring do arquivo de entrada. A substring vai de um indice determinado ate o primeiro espaco (' ')
@@ -181,6 +239,7 @@ public class InputReader
 	{
 		return System.getProperty("user.dir") + "/inputs/" + file_name;
 	}
+
 	//notifica o erro de id não único no arquivo de entrada e encerra o programa
 	void non_unique_id_input_error(char type, int id)
 	{
@@ -191,6 +250,14 @@ public class InputReader
 		if(type == 'R')
 			System.out.println("Input error: duplicated router id " + id);
 		//encerra
+		System.exit(-1);
+	}
+
+	//notifica erro de encontrar um duplex-link na entrada sem que tenha um dos ou ambos os componentes conhecidos
+	//isto e, se encontrou um duplex link que tenha um host e/ou roteador com um id desconhecidos
+	void not_defined_duplex_link_points_error(String point_A, String point_B, String line)
+	{
+		System.out.println("Error: In input line \""+line+"\"\none or both of the endpoints for this duplex-link ("+point_A+"<--->"+point_B+") have not been declared yet.");
 		System.exit(-1);
 	}
 

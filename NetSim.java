@@ -11,9 +11,7 @@ public class NetSim
 			invalid_argument_notification();
 		
 		new InputReader(args[0]);
-
 	}
-
 
 	//Funcoes relacionadas a checagem e notificacao de entrada
 	static boolean check_arguments(String[] args)

@@ -5,14 +5,16 @@ import java.util.regex.*;
 
 public class InputReader
 {
-	ArrayList<Host> hosts;                          //Coloca um objeto do tipo host na lista de hosts
-	ArrayList<Router> routers;                      //Coloca um objeto do tipo router na lista de routers
+	ArrayList<Host> hosts;                          //Lista de objetos do tipo Host
+	ArrayList<Router> routers;                      //Lista de objetos do tipo Router
+	ArrayList<DuplexLink> duplex_links;             //Lista de objetos do tipo DuplexLink
 
 	//Construtor
 	public InputReader(String file_name)
 	{
 		this.hosts = new ArrayList<Host>();
 		this.routers = new ArrayList<Router>();
+		this.duplex_links = new ArrayList<DuplexLink>();
 		read_input(file_name);
 	}
 
@@ -29,6 +31,9 @@ public class InputReader
     		{
     			if(get_host_from_line(line) == true) continue;
     			else if(get_router_from_line(line) == true) continue;
+    			else if(get_duplex_link_from_line(line)) continue;
+
+    			
     			//TODO: terminar os tratamentos das linhas de entrada. 
     		}
     	}
@@ -65,14 +70,41 @@ public class InputReader
 	int get_number_from_line(String line, int first_index)
 	{
 		int number_starting_index = first_index, number_ending_index = first_index;
-		while(Character.isDigit(line.charAt(number_ending_index + 1)))
-		{
-			number_ending_index++;
-			continue;
-		}
+		while(Character.isDigit(line.charAt(number_ending_index + 1))) number_ending_index++;
 		return Integer.parseInt(line.substring(number_starting_index, number_ending_index + 1));
 	}
 	
+	////checa se a linha e de duplex-link. Se sim, o adiciona a duplex_links e retorna true. Caso contrario, retorna false
+	boolean get_duplex_link_from_line(String line)
+	{
+		Pattern p = Pattern.compile("(\\$simulator duplex-link \\$)+((h|r)[0-9])+(\\.[0-9])?( \\$)+((h|r)[0-9])+(\\.[0-9])?( [0-9]+Mbps [0-9]+ms)$");
+    	Matcher m = p.matcher(line);
+    	if(m.matches())
+    	{
+    		String point_A, point_B;
+    		float mbps_capacity, latency;
+
+    		point_A = get_substring_from_line(line.substring(1), line.substring(1).indexOf("$") + 1);
+    		point_B = get_substring_from_line(line, line.lastIndexOf("$") + 1);
+    		System.out.println("AQUI " + line.substring(0, line.lastIndexOf(' ')));
+   			mbps_capacity = get_number_from_line(line.substring(0, line.lastIndexOf(' ')), line.substring(0, line.lastIndexOf(' ')).lastIndexOf(' ') + 1);
+    		latency = get_number_from_line(line, line.lastIndexOf(' ') + 1);
+
+    		//Insere na lista
+    		duplex_links.add(new DuplexLink(point_A, point_B, mbps_capacity, latency));
+    		return true;
+    	}
+    	return false;
+	}
+
+	//retorna uma substring do arquivo de entrada. A substring vai de um indice determinado ate o primeiro espaco (' ')
+	String get_substring_from_line(String line, int first_index)
+	{
+		int starting_index = first_index, ending_index; //starting_index e o indice do comeco da string que contem o ponto_A (e um h ou um r)
+		for(ending_index = starting_index; !Character.isSpaceChar(line.charAt(ending_index)); ending_index++) continue;
+		return line.substring(starting_index, ending_index);
+	}
+
 	//checa se a linha e de router. Se sim, o adiciona a routers e retorna true. Caso contrario, retorna false
 	boolean get_router_from_line(String line)
 	{
@@ -185,6 +217,14 @@ public class InputReader
 		{
 			for(Router r : routers)
 				System.out.println("Router"+r.get_id()+" with " +r.get_interfaces()+ " interfaces.");
+		}
+
+		if(duplex_links.isEmpty())
+			System.out.println("DuplexLinks: Empty");
+		else
+		{
+			for(DuplexLink dl : duplex_links)
+				System.out.println("DuplexLink "+dl.get_point_A()+" <---> " +dl.get_point_B()+ " with "+dl.get_mbps_capacity()+"Mbps and "+dl.get_latency()+"ms.");
 		}
 	}
 }

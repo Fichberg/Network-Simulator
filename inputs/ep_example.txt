@@ -1,0 +1,11 @@
+set h0 [$simulator host]
+set h1 [$simulator host]
+set h2 [$simulator host]
+set h3 [$simulator host]
+set r0 [$simulator router 31]
+set r1 [$simulator router 113]
+$simulator duplex-link $h0 $r0.0 10Mbps 10ms
+$simulator duplex-link $h1 $r0.1 5Mbps 2ms
+$simulator duplex-link $r0.2 $r1.0 2Mbps 20ms
+$simulator duplex-link $r1.1 $h2 10Mbps 5ms
+$simulator duplex-link $r1.2 $h3 5Mbps 2ms

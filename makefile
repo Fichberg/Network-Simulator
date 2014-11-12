@@ -8,7 +8,8 @@ CLASSES = \
         NetSim.java \
 		InputReader.java \
 		Host.java \
-		Router.java
+		Router.java \
+		DuplexLink.java
 
 default: classes
 

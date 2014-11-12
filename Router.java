@@ -10,7 +10,7 @@ public class Router
 		this.interfaces = interfaces;
 	}
 
-	//setters
+	//setters desnecessarios pois a configuracao e imutavel e ja escolhida no arquivo de entrada.
 
 	//getters
 	public int get_id()

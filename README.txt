@@ -1,13 +1,2 @@
-- O usuario deve entrar com um arquivo que tenha os hosts e os routers numerados, EM ORDEM, de 0 a n. Assim sendo, uma entrada válida para n = 4 hosts, é:
-
-set h0 [$simulator host]
-set h1 [$simulator host]
-set h2 [$simulator host]
-set h3 [$simulator host]
-
-E uma entrada inválida é:
-
-set h2 [$simulator host]
-set h1 [$simulator host]
-set h3 [$simulator host]
-set h4 [$simulator host]
+O identificador de um host ou router não pode se repetir na entrada (deve ser único para cada host/router). Assim sendo, para uma dada entrada com, por exemplo, 
+X hosts (ou routers) que tenha um host hY, não pode existir, na mesma entrada, um outro hY (caso contrário o programa se encerrará, notificando a falha da entrada).

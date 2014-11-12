@@ -36,6 +36,7 @@ public class InputReader
     			
     			//TODO: terminar os tratamentos das linhas de entrada. 
     		}
+    		print_lists();
     	}
     	catch (FileNotFoundException e) 
     	{
@@ -77,7 +78,7 @@ public class InputReader
 	////checa se a linha e de duplex-link. Se sim, o adiciona a duplex_links e retorna true. Caso contrario, retorna false
 	boolean get_duplex_link_from_line(String line)
 	{
-		Pattern p = Pattern.compile("(\\$simulator duplex-link \\$)+((h|r)[0-9])+(\\.[0-9])?( \\$)+((h|r)[0-9])+(\\.[0-9])?( [0-9]+Mbps [0-9]+ms)$");
+		Pattern p = Pattern.compile("(\\$simulator duplex-link \\$){1}?((h|r)[0-9]+){1}?(\\.[0-9])?( \\$){1}?((h|r)[0-9]){1}?(\\.[0-9])?( [0-9]+Mbps [0-9]+ms){1}?$");
     	Matcher m = p.matcher(line);
     	if(m.matches())
     	{
@@ -107,7 +108,7 @@ public class InputReader
 	//checa se a linha e de router. Se sim, o adiciona a routers e retorna true. Caso contrario, retorna false
 	boolean get_router_from_line(String line)
 	{
-		Pattern p = Pattern.compile("(set r)+[0-9]+ \\[\\$simulator router [0-9]+\\]+$");
+		Pattern p = Pattern.compile("(set r){1}?[0-9]+( \\[\\$simulator router [0-9]+\\]){1}?$");
     	Matcher m = p.matcher(line);
     	if(m.matches())
     	{
@@ -135,7 +136,7 @@ public class InputReader
 	//checa se a linha e de host. Se sim, o adiciona a hosts e retorna true. Caso contrario, retorna false
 	boolean get_host_from_line(String line)
 	{
-		Pattern p = Pattern.compile("(set h)+[0-9]+ \\[\\$simulator host\\]+$");
+		Pattern p = Pattern.compile("(set h){1}?[0-9]+( \\[\\$simulator host\\]){1}?$");
     	Matcher m = p.matcher(line);
     	if(m.matches())
     	{

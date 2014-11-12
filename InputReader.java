@@ -86,7 +86,6 @@ public class InputReader
 
     		point_A = get_substring_from_line(line.substring(1), line.substring(1).indexOf("$") + 1);
     		point_B = get_substring_from_line(line, line.lastIndexOf("$") + 1);
-    		System.out.println("AQUI " + line.substring(0, line.lastIndexOf(' ')));
    			mbps_capacity = get_number_from_line(line.substring(0, line.lastIndexOf(' ')), line.substring(0, line.lastIndexOf(' ')).lastIndexOf(' ') + 1);
     		latency = get_number_from_line(line, line.lastIndexOf(' ') + 1);
 

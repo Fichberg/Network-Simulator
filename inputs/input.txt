@@ -1,6 +1,0 @@
-set h0 [$simulator host]
-set h1 [$simulator host]
-set h2 [$simulator host]
-set h3 [$simulator host]
-set r0 [$simulator router 31]
-set r1 [$simulator router 113]

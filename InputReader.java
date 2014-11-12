@@ -36,7 +36,6 @@ public class InputReader
     			
     			//TODO: terminar os tratamentos das linhas de entrada. 
     		}
-    		print_lists();
     	}
     	catch (FileNotFoundException e) 
     	{

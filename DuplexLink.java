@@ -2,10 +2,14 @@ import java.io.*;
 
 public class DuplexLink
 {
-	String point_A;       //point_A e point_B guardam quem são os componentes da rede dos extremos deste duplex-link. Os extremos podem ser
-	String point_B;       //tanto hosts quanto routers, e são armazenadas como hX, ou rY.P {P é a porta e X e Y são os identificadores do componente}
-	float mbps_capacity;  //capacidade deste duplex-link, em mbps.
-	float latency;        //a latência [aka atraso] deste duplex-link, em ms.
+	/* point_A e point_B guardam quem são os componentes da rede dos extremos
+	   deste duplex-link. Os extremos podem ser tanto hosts quanto routers, e
+	   são armazenadas com o hX, ou rY.P {P é a porta e X e Y são os
+	   identificadores do componente}.*/
+	private String point_A;
+	private String point_B;
+	private float mbps_capacity; // capacidade deste duplex-link, em MBps.
+	private float latency;       //a latência [aka atraso] deste duplex-link em ms.
 
 	//Construtor
 	public DuplexLink(String point_A, String point_B, float mbps_capacity, float latency)
@@ -16,7 +20,8 @@ public class DuplexLink
 		this.latency = latency;
 	}
 
-	//setters desnecessarios pois a configuracao e imutavel e ja escolhida no arquivo de entrada.
+	/*"setters" aqui são desnecessários, pois a configuração é ditada pelo arquivo
+	 de entrada e é imutável. */
 
 	//getters
 	public String get_point_A()
@@ -40,12 +45,12 @@ public class DuplexLink
 	}
 
 	//outras funções relacionadas a manipulação de objetos DuplexLink
-	//ve se determinado ponto e de host
+	//vê se determinado ponto e de host
 	public boolean check_if_host_point(String point)
 	{
 		return point.charAt(0) == 'h';
 	}
-	
+
 	//ve se determinado ponto e de router
 	public boolean check_if_router_point(String point)
 	{

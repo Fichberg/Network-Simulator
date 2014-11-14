@@ -5,9 +5,9 @@ import java.util.regex.*;
 
 public class InputReader
 {
-	ArrayList<Host> hosts;                          //Lista de objetos do tipo Host
-	ArrayList<Router> routers;                      //Lista de objetos do tipo Router
-	ArrayList<DuplexLink> duplex_links;             //Lista de objetos do tipo DuplexLink
+	private ArrayList<Host> hosts;               //Lista de objetos do tipo Host
+	private ArrayList<Router> routers;           //Lista de objetos do tipo Router
+	private ArrayList<DuplexLink> duplex_links;  //Lista de objetos do tipo DuplexLink
 
 	//Construtor
 	public InputReader(String file_name)
@@ -18,13 +18,13 @@ public class InputReader
 		read_input(file_name);
 	}
 
-	//Leitor de entrada. Responsavel por obter os dados da simulacao
+	//Leitor de entrada. Responsável por obter os dados da simulação
 	void read_input(String file_name)
 	{
 		File file = new File(file_name = file_name_with_path(file_name));
 		BufferedReader file_reader = null;
-			
-		try 
+
+		try
 		{
     		file_reader = new BufferedReader(new FileReader(file));
     		for(String line = file_reader.readLine(); line != null; line = file_reader.readLine())
@@ -33,30 +33,30 @@ public class InputReader
     			else if(get_router_from_line(line) == true) continue;
     			else if(get_duplex_link_from_line(line)) continue;
 
-    			
-    			//TODO: terminar os tratamentos das linhas de entrada. 
+
+    			//TODO: terminar os tratamentos das linhas de entrada.
     		}
     	}
-    	catch (FileNotFoundException e) 
+    	catch (FileNotFoundException e)
     	{
     		//TODO: acertar a linha dentro do print
 		    //System.err.println("InputReader.java:27: " + e);
-		} 
-		catch (IOException e) 
+		}
+		catch (IOException e)
 		{
 			//TODO: acertar a linha dentro do print
 		    //System.err.println("InputReader.java:31: " + e);
-		} 
-		finally 
+		}
+		finally
 		{
-		    try 
+		    try
 		    {
-		        if (file_reader != null) 
+		        if (file_reader != null)
 		        {
 		            file_reader.close();
 		        }
-		    } 
-		    catch (IOException e) 
+		    }
+		    catch (IOException e)
 		    {
 				//TODO: acertar a linha dentro do print
 		    	//System.err.println("InputReader.java:44: " + e);
@@ -64,16 +64,16 @@ public class InputReader
 		}
 	}
 
-	//Retorna o identificador do router ou do host ou ainda o numero de interfaces do router. 
+	//Retorna o identificador do router ou do host ou ainda o numero de interfaces do router.
 	//Um router identificado na entrada como r23, tem identificador 23. Idem host, só que com h no lugar do r.
-	//first_index e o primeiro indice do numero que buscamos na linha 
+	//first_index e o primeiro indice do numero que buscamos na linha
 	int get_number_from_line(String line, int first_index)
 	{
 		int number_starting_index = first_index, number_ending_index = first_index;
 		while(Character.isDigit(line.charAt(number_ending_index + 1))) number_ending_index++;
 		return Integer.parseInt(line.substring(number_starting_index, number_ending_index + 1));
 	}
-	
+
 	////checa se a linha e de duplex-link. Se sim, o adiciona a duplex_links e retorna true. Caso contrario, retorna false
 	boolean get_duplex_link_from_line(String line)
 	{
@@ -117,8 +117,8 @@ public class InputReader
 
 		if(point_A.charAt(0) == 'h' && !hosts.isEmpty())
 		{
-			for(Host h : hosts) 
-				if(h.get_id() == point_A_id) 
+			for(Host h : hosts)
+				if(h.get_id() == point_A_id)
 				{
 					have_A = true;
 					break;
@@ -126,7 +126,7 @@ public class InputReader
 		}
 		else if(point_A.charAt(0) == 'r' && !routers.isEmpty())
 		{
-			for(Router r : routers) 
+			for(Router r : routers)
 				if(r.get_id() == point_A_id)
 				{
 					have_A = true;
@@ -135,8 +135,8 @@ public class InputReader
 		}
 		if(point_B.charAt(0) == 'h'  && !hosts.isEmpty())
 		{
-			for(Host h : hosts) 
-				if(h.get_id() == point_B_id) 
+			for(Host h : hosts)
+				if(h.get_id() == point_B_id)
 				{
 					have_B = true;
 					break;
@@ -144,7 +144,7 @@ public class InputReader
 		}
 		else if(point_B.charAt(0) == 'r' && !routers.isEmpty())
 		{
-			for(Router r : routers) 
+			for(Router r : routers)
 				if(r.get_id() == point_B_id)
 				{
 					have_B = true;
@@ -176,7 +176,7 @@ public class InputReader
     		//Coloca o primeiro elemento do tipo Router
     		if(routers.isEmpty())
     			routers.add(new Router(router_id, router_interfaces));
-    		//Checa se já existe um router com este id. Caso sim, avisa sobre o erro de entrada e encerra o programa (os identificadores devem ser unicos). 
+    		//Checa se já existe um router com este id. Caso sim, avisa sobre o erro de entrada e encerra o programa (os identificadores devem ser unicos).
     		//Caso não, adiciona o elemento na lista e prossegue normalmente
     		else
     		{
@@ -189,7 +189,7 @@ public class InputReader
     	}
     	return false;
 	}
-	
+
 	//checa se a linha e de host. Se sim, o adiciona a hosts e retorna true. Caso contrario, retorna false
 	boolean get_host_from_line(String line)
 	{
@@ -203,7 +203,7 @@ public class InputReader
     		//Coloca o primeiro elemento do tipo Host
     		if(hosts.isEmpty())
     			hosts.add(new Host(host_id));
-    		//Checa se já existe um host com este id. Caso sim, avisa sobre o erro de entrada e encerra o programa (os identificadores devem ser unicos). 
+    		//Checa se já existe um host com este id. Caso sim, avisa sobre o erro de entrada e encerra o programa (os identificadores devem ser unicos).
     		//Caso não, adiciona o elemento na lista e prossegue normalmente
     		else
     		{
@@ -222,12 +222,12 @@ public class InputReader
 	{
 		if(type == 'H')
 		{
-			for(Host h : hosts) 
+			for(Host h : hosts)
 				if(h.get_id() == id) return false;
 		}
 		if(type == 'R')
 		{
-			for(Router r : routers) 
+			for(Router r : routers)
 				if(r.get_id() == id) return false;
 		}
 		return true;

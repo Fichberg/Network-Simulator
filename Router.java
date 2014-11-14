@@ -1,7 +1,7 @@
 public class Router
 {
-	int id;             //identificador do router. Este identificador é único para este router
-	int interfaces;     //numero de interfaces que este router tem
+	private int id;         //identificador do router. Este identificador é único 
+	private int interfaces; //número de interfaces que este router tem
 
 	//Construtor
 	public Router(int id, int interfaces)
@@ -10,7 +10,8 @@ public class Router
 		this.interfaces = interfaces;
 	}
 
-	//setters desnecessarios pois a configuracao e imutavel e ja escolhida no arquivo de entrada.
+	/*"setters" aqui são desnecessários, pois a configuração é ditada pelo arquivo
+	de entrada e é imutável. */
 
 	//getters
 	public int get_id()

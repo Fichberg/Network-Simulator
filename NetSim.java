@@ -13,18 +13,19 @@ public class NetSim
 		new InputReader(args[0]);
 	}
 
-	//Funcoes relacionadas a checagem e notificacao de entrada
+	//Funções relacionadas a checagem e notificação de entrada
 	static boolean check_arguments(String[] args)
 	{
-		if(args.length != 1) //numero de parametros errado
+		if(args.length != 1) //número errado de parâmetros
 			return false;
-		if(!(args[0].endsWith(".txt"))) //nao tem a extensao esperada
+		if(!(args[0].endsWith(".txt"))) //não tem extensão esperada
 			return false;
 		return true;
 	}
 	static void invalid_argument_notification()
 	{
-		System.out.println("Invalid argument. Use:\n\njava NetSim <filename.txt>\n\nWhere filename is a .txt with the settings of the network components.");
+		System.err.println("Invalid argument. Use:\n\njava NetSim <filename.txt>\n\nWhere "
+						 + "filename.txt contains the network components settings.");
 		System.exit(-1);
 	}
 }

@@ -1,6 +1,6 @@
 public class Host
 {
-	int id;             //identificador do host. Este identificador é único para este host
+	private int id;  //identificador do host. Este identificador é único.
 
 	//Construtor
 	public Host(int id)
@@ -8,7 +8,8 @@ public class Host
 		this.id = id;
 	}
 
-	//setters desnecessarios pois a configuracao e imutavel e ja escolhida no arquivo de entrada.
+	/*"setters" aqui são desnecessários, pois a configuração é ditada pelo arquivo
+	de entrada e é imutável. */
 
 	//getters
 	public int get_id()

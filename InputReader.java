@@ -65,6 +65,13 @@ public class InputReader
 	{
 		configure_host(line);
 		configure_router_ip_port(line);
+		/*
+		TODO next step:
+		1) function configure_router_route for inputs like "$simulator $r0 route 10.0.0.0 0 10.1.1.0 1 192.168.3.0 2 192.168.2.0 192.168.3.4 192.168.1.0 192.168.3.4"
+		2) function configure_router_performance for inputs like "$simulator $r0 performance 100us 0 1000 1 1000 2 1000"
+		later:
+		see how will be structure for configuring the agents and later on, the sniffers.
+		*/
 	}
 
 	//Configura um host com as informacoes passadas pela entrada

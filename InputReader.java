@@ -10,6 +10,7 @@ public class InputReader
 	private ArrayList<DuplexLink> duplex_links;  //Lista de objetos do tipo DuplexLink
 
 	//Construtor
+	////////////
 	public InputReader(String file_name)
 	{
 		this.hosts = new ArrayList<Host>();
@@ -19,15 +20,17 @@ public class InputReader
 	}
 
 	//Leitor de entrada. Responsável por obter os dados da simulação
+	////////////////////////////////////////////////////////////////
 	void read_input(String file_name)
 	{
-		File file = new File(file_name = file_name_with_path(file_name));
+		File file = new File(System.getProperty("user.dir") + "/inputs/" + file_name);
 		BufferedReader file_reader = null;
 
 		try
 		{
     		file_reader = new BufferedReader(new FileReader(file));
-    		for(String line = file_reader.readLine(); line != null; line = file_reader.readLine())
+    		String line;
+    		while( (line = file_reader.readLine()) !=  null)
     		{
     			if(get_host_from_line(line) == true) continue;
     			else if(get_router_from_line(line) == true) continue;
@@ -66,8 +69,29 @@ public class InputReader
 		}
 	}
 
+	
+	//Faz o parsing individual de cada linha e retorna...
+	//////////////////////////////////////////////////////////////////////////
+	void parse_line(String line) 
+	{
+		Pattern[] patterns = 
+		{
+			Pattern.compile("set (\\w+) \\[\\$\\w+ host\\]"), //host setting
+			Pattern.compile("set (\\w+) \\[\\$\\w+ router (\\d+)\\]"), //router setting
+			Pattern.compile("\\$\\w+ duplex-link \\$(\\w+)\\.*(\\d+)* \\$(\\w+)\\.*(\\d+)* "
+					+ "(\\d+)[Mm]bps (\\d+)ms"), //duplex-link setting
+			Pattern.compile("\\$\\w+ \\$\\w+ (\\d+\\.\\d+\\.\\d+\\.\\d+) (\\d+\\.\\d+\\.\\d+\\.\\d+) "
+					+ "(\\d+\\.\\d+\\.\\d+\\.\\d+)"), //host configuration
+			Pattern.compile(""), //router configuration
+			Pattern.compile(""), //route definition
+			Pattern.compile(""), //router characteristics
+		};
+	}
+	
+	
 	//Retorna o identificador do router ou do host ou ainda o numero de interfaces do router.
 	//Uma vez com os componentes de rede criados no programa, os configuraremos
+	///////////////////////////////////////////////////////////////////////////
 	void configure_network_components(String line)
 	{
 		configure_host(line);
@@ -82,6 +106,7 @@ public class InputReader
 	}
 
 	//Configura um host com as informacoes passadas pela entrada
+	////////////////////////////////////////////////////////////
 	void configure_router_ip_port(String line)
 	{
 		Pattern p = Pattern.compile("(\\$simulator \\$r[0-9]+ [0-9]+){1}?.*");
@@ -364,11 +389,6 @@ public class InputReader
 		return true;
 	}
 
-	//retorna o file_name com o seu path
-	String file_name_with_path(String file_name)
-	{
-		return System.getProperty("user.dir") + "/inputs/" + file_name;
-	}
 
 	//notifica o erro de id não único no arquivo de entrada e encerra o programa
 	void non_unique_id_input_error(char type, int id)
@@ -413,7 +433,8 @@ public class InputReader
 
 
 
-
+/*=======================================================================================*/
+/*=======================================================================================*/
 	//DEBUG! Todas as funcoes que estiverem daqui para baixo nao fazem parte da entrega e deverao ser apagadas!
 	void print_lists()
 	{

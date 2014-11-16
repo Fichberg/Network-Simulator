@@ -5,8 +5,8 @@ set h2 [$simulator host]
 set h3 [$simulator host]
 
 #define os roteadores
-set r0 [$simulator router 31]
-set r1 [$simulator router 113]
+set r0 [$simulator router 3]
+set r1 [$simulator router 3]
 
 #define os enlaces
 $simulator duplex-link $h0 $r0.0 10Mbps 10ms

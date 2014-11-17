@@ -1,18 +1,15 @@
-public class Host
+public class Host extends Node
 {
-
-	private int id;               //identificador do host. Este identificador é único.
+	private String name;          //identificador do host. Este identificador é único.
 	private String computer_ip;   //endereço IP do computador
     private String router_ip;     //endereço ip do roteador padrao
     private String dns_server_ip; //endereço ip do servidor dns
+    private Agent agent;
 
 	//Construtor
-	public Host(int id)
+	public Host(String name)
 	{
-		this.id = id;
-		this.computer_ip = null;
-		this.router_ip = null;
-		this.dns_server_ip = null;
+		this.name = name;
 	}
 
 	//setters
@@ -33,10 +30,14 @@ public class Host
 		if(this.dns_server_ip == null)
 			this.dns_server_ip = dns_server_ip;
 	}
+	void set_agent(Agent agent)
+	{
+		this.agent = agent;
+	}
 
 	//getters
-	public int get_id()
+	public String get_name()
 	{
-		return this.id;
+		return this.name;
 	}
 }

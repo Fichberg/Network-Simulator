@@ -5,11 +5,20 @@ JC = javac
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
-        NetSim.java \
-		InputReader.java \
+		Agent.java \
+		AgentEnum.java \
+		DNSServer.java \
+		DuplexLink.java \
+		FTPClient.java \
+		FTPServer.java \
 		Host.java \
+		HTTPClient.java \
+		HTTPServer.java \
+		InputReader.java \
+		NetSim.java \
+		Node.java \
 		Router.java \
-		DuplexLink.java
+		Sniffer.java 
 
 default: classes
 

@@ -6,30 +6,34 @@ public class DuplexLink
 	   deste duplex-link. Os extremos podem ser tanto hosts quanto routers, e
 	   são armazenadas com o hX, ou rY.P {P é a porta e X e Y são os
 	   identificadores do componente}.*/
-	private String point_A;
-	private String point_B;
-	private float mbps_capacity; // capacidade deste duplex-link, em MBps.
-	private float latency;       //a latência [aka atraso] deste duplex-link em ms.
+	private Node point_A;
+	private Node point_B;
+	private float capacity;  //capacidade deste duplex-link em MBps.
+	private float latency;   //a latência deste duplex-link em ms.
+	private Sniffer sniffer; //sniffer associado ao link.
 
 	//Construtor
-	public DuplexLink(String point_A, String point_B, float mbps_capacity, float latency)
+	public DuplexLink(Node point_A, Node point_B, float capacity, float latency)
 	{
 		this.point_A = point_A;
 		this.point_B = point_B;
-		this.mbps_capacity = mbps_capacity;
+		this.capacity = capacity;
 		this.latency = latency;
 	}
 
-	/*"setters" aqui são desnecessários, pois a configuração é ditada pelo arquivo
-	 de entrada e é imutável. */
+	//setters
+	public void set_sniffer(Sniffer sniffer)
+	{
+		this.sniffer = sniffer;
+	}
 
 	//getters
-	public String get_point_A()
+	public Node get_point_A()
 	{
 		return this.point_A;
 	}
 
-	public String get_point_B()
+	public Node get_point_B()
 	{
 		return this.point_B;
 	}
@@ -45,39 +49,46 @@ public class DuplexLink
 	}
 
 	//outras funções relacionadas a manipulação de objetos DuplexLink
-	//vê se determinado ponto e de host
-	public boolean check_if_host_point(String point)
+	
+	//verifica se o link contém as duas pontas
+	public boolean has_edges(String point_A, String point_B)
 	{
-		return point.charAt(0) == 'h';
+		String edge_one = this.point_A.get_name();
+		String edge_two = this.point_B.get_name();
+		if ( (edge_one.equals(point_A) || edge_one.equals(point_B)) &&
+			 (edge_two.equals(point_A) || edge_two.equals(point_B)))
+			return true;
+		return false;
+	}
+	
+	//vê se determinado ponto é de host
+	public boolean is_host_point(String point)
+	{
+		Node ponto = null;
+		if (this.point_A.get_name().equals(point))
+			ponto = this.point_A;
+		else if(this.point_B.get_name().equals(point))
+			ponto = this.point_B;
+		else
+			System.err.println("ponto inexistente");
+		if (ponto instanceof Host)
+			return true;
+		return false;
 	}
 
-	//ve se determinado ponto e de router
-	public boolean check_if_router_point(String point)
+	//ve se determinado ponto é de router
+	public boolean is_router_point(String point)
 	{
-		return point.charAt(0) == 'r';
+		Node ponto = null;
+		if (this.point_A.get_name().equals(point))
+			ponto = this.point_A;
+		else if(this.point_B.get_name().equals(point))
+			ponto = this.point_B;
+		else
+			System.err.println("ponto inexistente");
+		if (ponto instanceof Router)
+			return true;
+		return false;
 	}
 
-	//retorna o identificador do host do ponto. Retorna -1 se o argumento não for um host
-	public int get_host_point_id(String host_point)
-	{
-		if(check_if_host_point(host_point))
-			return Integer.parseInt(host_point.substring(1));
-		return -1;
-	}
-
-	//retorna o identificador do router do ponto. Retorna -1 se o argumento não for um router
-	public int get_router_point_id(String router_point)
-	{
-		if(check_if_router_point(router_point))
-			return Integer.parseInt(router_point.substring(1, router_point.indexOf('.')));
-		return -1;
-	}
-
-	//retorna a porta do router do ponto. Retorna -1 se o argumento não for um router
-	public int get_router_port(String router_point)
-	{
-		if(check_if_router_point(router_point))
-			return Integer.parseInt(router_point.substring(router_point.indexOf('.') + 1));
-		return -1;
-	}
 }

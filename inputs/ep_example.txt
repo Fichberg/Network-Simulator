@@ -33,19 +33,23 @@ $simulator $r1 route 192.168.3.0 0 192.168.2.0 1 192.168.1.0 2 10.0.0.0 192.168.
 $simulator $r0 performance 100us 0 1000 1 1000 2 1000
 $simulator $r1 performance 20us 0 1000 1 1000 2 1000
 
-#define agentes da camada de aplicação
+#define agentes da camada e aplicação
 set httpc0 [new Agent/HTTPClient]
 set httpc1 [new Agent/HTTPClient]
 set https2 [new Agent/HTTPServer]
 set dns3 [new Agent/DNSServer]
+
+#associa agente ao host
 $simulator attach-agent $httpc0 $h0
 $simulator attach-agent $httpc1 $h1
 $simulator attach-agent $https2 $h2
 $simulator attach-agent $dns3 $h3
 
-#define sniffers. A leitura deve ficar salva nos arquivos temporários
+#define sniffers. 
 set sniffer1 [new Agent/Sniffer]
 set sniffer2 [new Agent/Sniffer]
+
+#a leitura dos sniffers deve ser salva nos arquivos temporários
 $simulator attach-agent $sniffer1 $r0.2 $r.0 "tmp/sniffer1"
 $simulator attach-agent $sniffer2 $h1 $r0.1 "tmp/sniffer2"
 

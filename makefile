@@ -32,4 +32,4 @@ classes: $(CLASSES:.java=.class)
 
 clean:
 	$(RM) *.class
-	$(RM) *.log
+	$(RM) logs/*.log

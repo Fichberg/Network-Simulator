@@ -1,6 +1,5 @@
-import java.io.*;
 
-public class DuplexLink
+public class DuplexLink extends Thread
 {
 	/* point_A e point_B guardam quem são os componentes da rede dos extremos
 	   deste duplex-link. Os extremos podem ser tanto hosts quanto routers, e
@@ -40,16 +39,28 @@ public class DuplexLink
 
 	public float get_mbps_capacity()
 	{
-		return this.latency;
+		return this.capacity;
 	}
 
 	public float get_latency()
 	{
 		return this.latency;
 	}
-
-	//outras funções relacionadas a manipulação de objetos DuplexLink
 	
+	//conecta-se aos extremos do enlace passando a si mesmo
+	public void set_link(String point_A, String point_B)
+	{
+		String A = null, B = null;
+		String[] splitA = point_A.split("\\.");
+		String[] splitB = point_B.split("\\.");
+		if (splitA.length == 2)
+			A = splitA[1];
+		if (splitB.length == 2)
+			B = splitB[1];
+		this.point_A.set_link(this, A);
+		this.point_B.set_link(this, B);
+	}
+
 	//verifica se o link contém as duas pontas
 	public boolean has_edges(String point_A, String point_B)
 	{
@@ -61,8 +72,8 @@ public class DuplexLink
 		return false;
 	}
 	
-	//vê se determinado ponto é de host
-	public boolean is_host_point(String point)
+	//devolve um Node associado a um nome
+	private Node get_Node(String point) 
 	{
 		Node ponto = null;
 		if (this.point_A.get_name().equals(point))
@@ -70,25 +81,45 @@ public class DuplexLink
 		else if(this.point_B.get_name().equals(point))
 			ponto = this.point_B;
 		else
-			System.err.println("ponto inexistente");
+			System.err.println("Inexistant point");
+		return ponto;
+	}
+	
+	//verifica se determinado ponto é de host
+	public boolean is_host_point(String point)
+	{
+		Node ponto = get_Node(point);
 		if (ponto instanceof Host)
 			return true;
 		return false;
 	}
 
-	//ve se determinado ponto é de router
+	//verifica se determinado ponto é de router
 	public boolean is_router_point(String point)
 	{
-		Node ponto = null;
-		if (this.point_A.get_name().equals(point))
-			ponto = this.point_A;
-		else if(this.point_B.get_name().equals(point))
-			ponto = this.point_B;
-		else
-			System.err.println("ponto inexistente");
+		Node ponto = get_Node(point);
 		if (ponto instanceof Router)
 			return true;
 		return false;
+	}
+	
+	//============================================
+	//COMMUNICATION
+	
+	//passa pra frente o pacote de um nó para outro
+	public void forward_packet(Node sender, Packet packet)
+	{
+		Node receiver = null;
+		if (sender.equals(this.point_A))
+			receiver = this.point_B;
+		else if (sender.equals(this.point_B))
+			receiver = this.point_A;
+		else
+		{
+			System.err.println("You can't send packets if you don't belong to me!");
+			return;
+		}
+		receiver.receive_packet(this, packet);
 	}
 
 }

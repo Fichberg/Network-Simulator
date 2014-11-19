@@ -7,6 +7,7 @@ JC = javac
 CLASSES = \
 		Agent.java \
 		AgentEnum.java \
+		ApplicationLayer.java \
 		DNSServer.java \
 		DuplexLink.java \
 		FTPClient.java \
@@ -17,8 +18,13 @@ CLASSES = \
 		InputReader.java \
 		NetSim.java \
 		Node.java \
+		Packet.java \
 		Router.java \
-		Sniffer.java 
+		RouterBuffer.java \
+		Sniffer.java \
+		TCP.java \
+		TransportLayer.java \
+		UDP.java 
 
 default: classes
 

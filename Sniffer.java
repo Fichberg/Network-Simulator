@@ -3,6 +3,7 @@ public class Sniffer extends Agent {
 
 	private String name;
 	private String file;
+	private DuplexLink link;
 	
 	//Construtor
 	public Sniffer(String name)
@@ -14,6 +15,12 @@ public class Sniffer extends Agent {
 	public void set_file(String file)
 	{
 		this.file = file;
+		//FALTA CRIAR O ARQUIVO TEMPORARIO AQUI
+	}
+	//define onde a aplicação está localizada
+	public void set_residence(Object obj)
+	{
+		this.link = (DuplexLink) obj;
 	}
 	
 	//getters
@@ -21,4 +28,10 @@ public class Sniffer extends Agent {
 	{
 		return this.name;
 	}
+	
+	public String get_type()
+	{
+		return "Sniffer";
+	}
+
 }

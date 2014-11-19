@@ -1,6 +1,8 @@
 /*Esta classe abstrata representa um agente da rede (conf. AgentEnum)*/
 public abstract class Agent {
 	
-	String name;
+	public abstract String get_name();
+	public abstract String get_type();
+	public abstract void set_residence(Object obj);
 	
 }

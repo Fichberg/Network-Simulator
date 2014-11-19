@@ -1,6 +1,5 @@
 import java.io.*;
-import java.net.*;
-import java.util.*;
+
 
 public class NetSim
 {
@@ -11,9 +10,10 @@ public class NetSim
 			invalid_argument_notification();
 		
 		new InputReader(args[0]);
+		
 	}
 
-	//Funções relacionadas a checagem e notificação de entrada
+	//Funções relacionadas a verificação e notificação de entrada
 	static boolean check_arguments(String[] args)
 	{
 		if(args.length != 1) //número errado de parâmetros

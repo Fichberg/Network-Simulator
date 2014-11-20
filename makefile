@@ -24,7 +24,8 @@ CLASSES = \
 		Sniffer.java \
 		TCP.java \
 		TransportLayer.java \
-		UDP.java 
+		UDP.java \
+		Clock.java
 
 default: classes
 

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -12,14 +13,14 @@ public class Host extends Node
     private Agent agent;               //agente de aplicação sobre o host
     private DuplexLink link;           //enlace ao qual está ligado o host
     private LinkedList<Packet> buffer; //buffer (infinito) do host
-    private boolean spool;             //indica que há pacotes recebidos na fila
+    private int sliding_window;        //tamanho da janela de envio de pacotes
 
 	//Construtor
 	public Host(String name)
 	{
 		this.name = name;
 		this.buffer = new LinkedList<Packet>();
-		this.spool = false;
+		this.sliding_window = 1;
 	}
 
 	
@@ -84,7 +85,8 @@ public class Host extends Node
 	public void receive_packet(DuplexLink link, Packet packet)
 	{
 		this.buffer.add(packet);
-		this.spool = true;
+		if (this.buffer.size() == this.sliding_window)
+			this.notify(); //avisa que um pacote chegou
 	}
 	
 	
@@ -92,6 +94,7 @@ public class Host extends Node
 	//TCP
 	
 	//inicia uma conexão TCP (faz o 3-way-handshake)
+	//precisa abrir o arquivo esquemas/3wayhandshake.pcap no wireshark e dar uma estudada
 	public void open_connection()
 	{
 		
@@ -130,30 +133,39 @@ public class Host extends Node
 		return offset + 1460;
 	}
 	
-	//envia pacote TCP (com controle de congestionamento)
-	public void send_TCP_packet(Packet packet)
+	//envia um pacote TCP de acordo com a política de controle de congestionamento
+	public void send_TCP_packet(Packet packet) throws InterruptedException
 	{
+		//mandando pacotes fragmentados
 		if (packet.getLength() > 1460)
 		{
 			int total = packet.getLength() / 1460 + 1;
 			int SEQ = 1;
 			int ACK = 1;
+			Packet[] packets = new Packet[total];
 			
 			for (int i = 0; i < total; i++)
 			{
 				Packet p = new Packet();
 				packet.clone_to_packet(p);
 				TCP transport = (TCP) p.getTransport();
-				transport.setACK_number(ACK);
+				transport.setACK_number(ACK++);
 				transport.setSequence_number(SEQ);
 				SEQ = chop_data(p, SEQ);
-				send_packet(p);
 			}
+			send_with_congestion_control(packets);
+			
 		}
+		//mandando apenas um pacote
 		else 
 		{
-			//TODO
+			while(!got_ACK(1))
+			{
+				send_packet(packet);
+				wait(100); //timeout
+			}
 		}
+			
 	}
 	
 	//verifica se algum pacote da fila tem o ACK esperado
@@ -167,6 +179,46 @@ public class Host extends Node
 				return true;
 		}
 		return false;
+	}
+	
+	//política de controle de congestionamento
+	private void send_with_congestion_control(Packet[] packets) throws InterruptedException
+	{
+		
+		boolean recebeu = false;
+		ArrayList<Integer> acks = new ArrayList<Integer>();
+		
+		for (int curr_packet = 0; curr_packet < packets.length; curr_packet++)
+		{
+			//envia uma janela de pacotes
+			for (int i = 0; i < this.sliding_window; i++)
+			{	
+				TCP transport = (TCP) packets[curr_packet].getTransport();
+				acks.add(transport.getACK_number());
+				send_packet(packets[curr_packet++]);
+			}
+			
+			//verifica se a janela enviada chegou ao destino
+			Iterator<Integer> ack_itr = acks.iterator();
+			wait(100); //timeout
+			recebeu = true;
+			while(ack_itr.hasNext())
+			{
+				int ACK = ack_itr.next();
+				if (!got_ACK(ACK))
+				{
+					recebeu = false;
+					curr_packet -= this.sliding_window;
+					acks.clear();
+				}
+			}
+		
+			//dobra o envio de pacotes em caso de sucesso
+			if (recebeu)
+				this.sliding_window *= 2;
+			else
+				this.sliding_window = 1;
+		}
 	}
 	
 	//==============================================

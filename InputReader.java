@@ -10,23 +10,28 @@ public class InputReader
 	private HashMap<String, Node> nodes;         //Dicionário de nós <Nome do nó, Node>
 	private HashMap<String, Agent> agents;       //Dicionário de agentes <Nome do agente, Agent>
 	private HashMap<String, Node> apps;          //Dicionário do tipo <Nome do agente, Node>  
+	private HashMap<Float, String> commands;   //Dicionário com o programa do simulador
 	private ArrayList<DuplexLink> duplex_links;  //Lista de objetos do tipo DuplexLink
 
 
 	//Construtor
 	public InputReader(String file_name)
 	{
-		this.hosts   = new HashMap<String, Host>();
-		this.routers = new HashMap<String, Router>();
-		this.nodes   = new HashMap<String, Node>();
-		this.agents  = new HashMap<String, Agent>();
-		this.apps    = new HashMap<String, Node>();
+		this.hosts    = new HashMap<String, Host>();
+		this.routers  = new HashMap<String, Router>();
+		this.nodes    = new HashMap<String, Node>();
+		this.agents   = new HashMap<String, Agent>();
+		this.apps     = new HashMap<String, Node>();
+		this.commands = new HashMap<Float, String>();
 		this.duplex_links = new ArrayList<DuplexLink>();
 		read_input(file_name);
 	}
 
+	//======================================
+	//READING
+	
 	//Leitor de entrada. Responsável por obter os dados da simulação
-	void read_input(String file_name)
+	public void read_input(String file_name)
 	{
 		File file = new File(System.getProperty("user.dir") + "/inputs/" + file_name);
 		BufferedReader file_reader = null;
@@ -62,7 +67,7 @@ public class InputReader
 		    }
 		}
 		//TESTE (para verificar o funcionamento do roteamento) -- APAGAR ISSO NO FUTURO!
-		Iterator<Router> roteadores = this.routers.values().iterator();
+		/*Iterator<Router> roteadores = this.routers.values().iterator();
 		while (roteadores.hasNext()) {
 			Router r = roteadores.next();
 			System.out.println("iniciando o roteador " + r.get_name());
@@ -73,12 +78,14 @@ public class InputReader
 		packet.setIP_source("10.0.0.1");
 		packet.setIP_destination("192.168.2.2");
 		Host h0 = this.hosts.get("h0");
-		h0.send_packet(packet);
+		h0.send_packet(packet);*/
 	}
+
+	//========================================
+	//PARSING
 	
 	//Faz o parsing individual de cada linha e faz o dispatch para a função apropriada
-	/*===============================================================================*/
-	void parse_line(String line) 
+	private void parse_line(String line) 
 	{
 		//define todos os padrões possíveis de serem encontrados numa linha
 		Pattern[] patterns =
@@ -151,7 +158,7 @@ public class InputReader
 	}
 	
 	//1: cria uma instância nova de um host e coloca-o no dicionário
-	void set_host(String host) 
+	private void set_host(String host) 
 	{
 		Host h = new Host(host);
 		this.nodes.put(host, h);
@@ -159,7 +166,7 @@ public class InputReader
 	}
 	
 	//2: cria uma instância nova de um router e coloca-o no dicionário 
-	void set_router(String router, String interfaces)
+	private void set_router(String router, String interfaces)
 	{
 		int nr_ports = Integer.parseInt(interfaces);
 		Router r = new Router(router, nr_ports);
@@ -168,7 +175,7 @@ public class InputReader
 	}
 	
 	//3: cria uma instância nova de um duplex_link e coloca na lista correspondente
-	void set_duplex_link(String point_A, String point_B, String capacity, String latency)
+	private void set_duplex_link(String point_A, String point_B, String capacity, String latency)
 	{
 		//desprezando as portas
 		String pointA = point_A.replaceAll("\\.\\d+", "");
@@ -185,7 +192,7 @@ public class InputReader
 	}
 	
 	//4: configura um host com IP, default gateway e DNS
-	void configure_host(String host, String IP, String router, String DNS)
+	private void configure_host(String host, String IP, String router, String DNS)
 	{
 		Host h = this.hosts.get(host);
 		h.set_computer_ip(IP);
@@ -194,7 +201,7 @@ public class InputReader
 	}
 	
 	//5: configura um router associando um IP a uma interface do enlace
-	void configure_router(String router, String line)
+	private void configure_router(String router, String line)
 	{
 		Pattern p = Pattern.compile("(\\d+) (\\d+\\.\\d+\\.\\d+\\.\\d+)");
 		Matcher m = p.matcher(line);
@@ -204,7 +211,7 @@ public class InputReader
 	}
 	
 	//6: define as rotas do roteador
-	void configure_router_route(String router, String line)
+	private void configure_router_route(String router, String line)
 	{
 		Pattern p = Pattern.compile("(\\d+\\.\\d+\\.\\d+\\.\\d+) (\\d+\\s|\\d+\\.\\d+\\.\\d+\\.\\d+)");
 		Matcher m = p.matcher(line);
@@ -214,7 +221,7 @@ public class InputReader
 	}
 	
 	//7: define as especificações de desempenho do roteador
-	void configure_router_specs(String router, String time, String line)
+	private void configure_router_specs(String router, String time, String line)
 	{
 		Pattern p = Pattern.compile("(\\d+) (\\d+)");
 		Matcher m = p.matcher(line);
@@ -224,7 +231,7 @@ public class InputReader
 	}
 	
 	//8: cria instância de um agente da rede (aplicação ou sniffer)
-	void set_agent(String agent, String type)
+	private void set_agent(String agent, String type)
 	{
 		AgentEnum a = AgentEnum.valueOf(type);
 		switch(a)
@@ -258,7 +265,7 @@ public class InputReader
 	}
 	
 	//9: associa um agente de aplicação a um host
-	void attach_app_agent(String agent, String host)
+	private void attach_app_agent(String agent, String host)
 	{
 		Agent a = this.agents.get(agent);
 		Host h  = this.hosts.get(host);
@@ -267,7 +274,7 @@ public class InputReader
 	}
 	
 	//10: associa um agente sniffer a um duplex_link
-	void attach_sniffer_agent(String agent, String point_A, String point_B, String file)
+	private void attach_sniffer_agent(String agent, String point_A, String point_B, String file)
 	{
 		Iterator<DuplexLink> itr = this.duplex_links.iterator();
 		while (itr.hasNext())
@@ -283,11 +290,38 @@ public class InputReader
 	}
 	
 	//11: define o programa principal
-	//TODO: falta definir como os Hosts, Router e Agents vão receber essa mensagem...
-	void set_simulation(String time, String command)
+	private void set_simulation(String time, String command)
 	{
-		//System.out.println("set_simulation: " + time + " " + command);
-		
+		this.commands.put(Float.parseFloat(time), command);
+	}
+	
+	//=================================
+	//SETTERS AND GETTERS
+	
+	//devolve um dicionário tempo de chamada (segs) -> comando  
+	public HashMap<Float, String> get_simulator_program() 
+	{
+		return this.commands;
+	}
+	
+	//devolve um Node
+	public Node get_node(String node)
+	{
+		return this.nodes.get(node);
+	}
+	
+	//devolve uma lista com todos os Nodes
+	public Node[] get_all_nodes()
+	{
+		Node[] node_list = new Node[this.nodes.size()];
+		node_list = this.nodes.values().toArray(node_list);
+		return node_list;
+	}
+	
+	//devolve um agente de aplicação
+	public Agent get_agent(String agent)
+	{
+		return this.agents.get(agent);
 	}
 	
 }

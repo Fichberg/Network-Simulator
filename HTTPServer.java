@@ -26,4 +26,10 @@ public class HTTPServer extends Agent {
 	{
 		return "HTTPServer";
 	}
+
+	public void receive_command(String command) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

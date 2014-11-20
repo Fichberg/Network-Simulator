@@ -37,7 +37,8 @@ public class HTTPClient extends Agent {
 	//recebe comando
 	public void receive_command(String command)
 	{
-		
+		//DEBUG! -- APAGAR NO FUTURO
+		System.out.println("Recebi o comando: " + command);
 	}
 	
 	

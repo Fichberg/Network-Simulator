@@ -27,4 +27,10 @@ public class DNSServer extends Agent {
 		return "DNSServer";
 	}
 
+	public void receive_command(String command) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -75,4 +75,10 @@ public class Sniffer extends Agent {
             System.err.println("Sniffer.java:75: Error while reading file:" + e.getMessage());                      
   	  	}
 	}
+
+	public void receive_command(String command) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

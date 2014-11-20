@@ -25,4 +25,10 @@ public class FTPClient extends Agent {
 	{
 		return "FTPClient";
 	}
+
+	public void receive_command(String command) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

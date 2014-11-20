@@ -1,5 +1,5 @@
 //classe que armazena os dados do UDP na camada de transporte
-public class UDP {
+public class UDP extends TransportLayer{
 
 	private String protocol;
 	private int source_port;

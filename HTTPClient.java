@@ -37,9 +37,31 @@ public class HTTPClient extends Agent {
 	//recebe comando
 	public void receive_command(String command)
 	{
-		//DEBUG! -- APAGAR NO FUTURO
-		System.out.println("Recebi o comando: " + command);
+		Packet packet = process_command(command);
+		Host h = (Host) this.node;
+		packet = h.build_TCP_packet(packet);
+		h.send_packet(packet);
 	}
 	
+	//======================================
+	//COMMUNICATION
+	
+	//cria um pacote com dados da camada de aplicação
+	public Packet build_packet(String text, String dest_name)
+	{
+		ApplicationLayer app = new ApplicationLayer("HTTP", text, " ", dest_name, 80, 54823);
+		Packet packet = new Packet();
+		packet.setApplication(app);
+		return packet;
+	}
+	
+	//processa um comando recebido do simulador e transforma-o num pacote
+	public Packet process_command(String command)
+	{
+		String[] split = command.split(" ");
+		String text = split[0] + " / HTTP/1.1 \r\n"
+		                       + "host: " + split[1] + "\r\n";
+		return build_packet(text, split[1]);
+	}	
 	
 }

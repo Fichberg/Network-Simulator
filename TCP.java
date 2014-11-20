@@ -1,6 +1,6 @@
 
 //classe que armazena os dados do TCP na camada de transporte
-public class TCP {
+public class TCP extends TransportLayer {
 	
 	private String protocol;
 	private int source_port;
@@ -11,6 +11,16 @@ public class TCP {
 	private boolean ACK;
 	private boolean SIN;
 	private boolean FIN;
+	
+	//Construtor
+	public TCP(int source, int destination) 
+	{
+		this.source_port = source;
+		this.destination_port = destination;
+		this.ACK = true;
+		this.SIN = false;
+		this.FIN = false;
+	}
 	
 	//getters e setters
 	public String getProtocol() {

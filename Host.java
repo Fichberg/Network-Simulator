@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.LinkedList;
 
 
@@ -11,12 +12,14 @@ public class Host extends Node
     private Agent agent;               //agente de aplicação sobre o host
     private DuplexLink link;           //enlace ao qual está ligado o host
     private LinkedList<Packet> buffer; //buffer (infinito) do host
+    private boolean spool;             //indica que há pacotes recebidos na fila
 
 	//Construtor
 	public Host(String name)
 	{
 		this.name = name;
 		this.buffer = new LinkedList<Packet>();
+		this.spool = false;
 	}
 
 	
@@ -74,19 +77,17 @@ public class Host extends Node
 	//envia pacote pelo enlace do host
 	public void send_packet(Packet packet)
 	{
-		System.out.println("Pacote: " + packet.getId() + " saindo de: " + this.name);
 		this.link.forward_packet(this, packet);
 	}	
 	
 	//recebe pacote do enlace do host
 	public void receive_packet(DuplexLink link, Packet packet)
 	{
-		System.out.println("Pacote: " + packet.getId() + " chegando em: " + this.name);
 		this.buffer.add(packet);
+		this.spool = true;
 	}
 	
 	
-	//------------------ NAO IMPLEMENTADO AINDA------------------------
 	//==============================================
 	//TCP
 	
@@ -94,6 +95,78 @@ public class Host extends Node
 	public void open_connection()
 	{
 		
+	}
+	
+	//constrói pacote TCP a partir da camada de aplicação
+	public Packet build_TCP_packet(Packet app_pack) 
+	{
+		ApplicationLayer app = app_pack.getApplication();
+		String destination_host = app.get_dest_name();
+		
+		//resolve o nome do destino
+		if (!destination_host.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
+		{
+			//TODO DNS_lookup (destination_host);
+		}
+		
+		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
+		app_pack.setTransport(transport_layer);
+		app_pack.setLength(transport_layer.getLength()); //+ tamanho do PACKET!
+		app_pack.setProtocol(6); //número do TCP
+		app_pack.setTTL(64);
+		app_pack.setIP_source(this.computer_ip);
+		app_pack.setIP_destination(destination_host);
+		
+		return app_pack;
+	}
+	
+	//fragmenta pacotes de acordo com o MSS = 1460
+	public int chop_data(Packet packet, int offset)
+	{
+		String data = packet.get_data();
+		char[] data_in_chars = data.toCharArray();
+		String chopped_data = String.copyValueOf(data_in_chars, offset-1, 1460);
+		packet.set_data(chopped_data);
+		return offset + 1460;
+	}
+	
+	//envia pacote TCP (com controle de congestionamento)
+	public void send_TCP_packet(Packet packet)
+	{
+		if (packet.getLength() > 1460)
+		{
+			int total = packet.getLength() / 1460 + 1;
+			int SEQ = 1;
+			int ACK = 1;
+			
+			for (int i = 0; i < total; i++)
+			{
+				Packet p = new Packet();
+				packet.clone_to_packet(p);
+				TCP transport = (TCP) p.getTransport();
+				transport.setACK_number(ACK);
+				transport.setSequence_number(SEQ);
+				SEQ = chop_data(p, SEQ);
+				send_packet(p);
+			}
+		}
+		else 
+		{
+			//TODO
+		}
+	}
+	
+	//verifica se algum pacote da fila tem o ACK esperado
+	private boolean got_ACK(int ACK)
+	{
+		Iterator<Packet> itr = this.buffer.iterator();
+		while (itr.hasNext())
+		{
+			TCP transport = (TCP) itr.next().getTransport();
+			if (transport.getACK_number() == ACK)
+				return true;
+		}
+		return false;
 	}
 	
 	//==============================================

@@ -1,4 +1,4 @@
-
+ 
 public enum AgentEnum {
 	DNSServer,
 	FTPClient,

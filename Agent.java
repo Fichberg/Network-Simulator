@@ -1,4 +1,5 @@
 /*Esta classe abstrata representa um agente da rede (conf. AgentEnum)*/
+
 public abstract class Agent {
 	
 	public abstract String get_name();

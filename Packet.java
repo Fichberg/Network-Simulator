@@ -11,6 +11,7 @@ public class Packet {
 	private String IP_destination;         //IP de destino
 	private int protocol;                  //Protocolo da camada de transporte (TCP ou UDP)
 	private int TTL;                       //Time-to-live
+	private String data;                   //dados enviados pelo pacote
 	
 	
 	//Construtor
@@ -21,9 +22,6 @@ public class Packet {
 	//getters e setters (GERADO AUTOMATICAMENTE, REVISAR!)
 	public UUID getId() {
 		return id;
-	}
-	public void setId(UUID id) {
-		this.id = id;
 	}
 	public ApplicationLayer getApplication() {
 		return application;
@@ -67,7 +65,28 @@ public class Packet {
 	public void setTTL(int tTL) {
 		TTL = tTL;
 	}
-
 	
+	
+	public String get_data()
+	{
+		return this.data;
+	}
+	
+	public void set_data(String data)
+	{
+		this.data = data;
+	}
+
+	//copia os dados do pacote atual em outro passado como parâmetro
+	public void clone_to_packet(Packet packet)
+	{
+		packet.setApplication(this.application);
+		packet.setIP_destination(this.IP_destination);
+		packet.setIP_source(this.IP_source);
+		packet.setProtocol(this.protocol);
+		packet.setLength(this.length);
+		packet.setTransport(this.transport);
+		packet.setTTL(this.TTL);
+	}
 	
 }

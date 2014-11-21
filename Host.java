@@ -123,6 +123,7 @@ public class Host extends Node
 		
 		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
 		app_pack.setTransport(transport_layer);
+		app_pack.getTransport().protocol = "TCP";
 		app_pack.setLength(transport_layer.getLength()); //+ tamanho do PACKET!
 		app_pack.setProtocol(6); //número do TCP
 		app_pack.setTTL(64);
@@ -332,6 +333,7 @@ public class Host extends Node
 		app_pack.setIP_destination(destination);
 		app_pack.setProtocol(17);
 		app_pack.setTransport(transport_layer);
+		app_pack.getTransport().protocol = "UDP";
 		
 		return app_pack;
 	}

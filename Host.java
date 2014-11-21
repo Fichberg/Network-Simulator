@@ -344,7 +344,8 @@ public class Host extends Node
 		app_pack.setIP_destination(destination);
 		app_pack.setProtocol(17);
 		app_pack.setTransport(transport_layer);
-		
+		app_pack.getTransport().protocol = "UDP";
+
 		return app_pack;
 	}
 	

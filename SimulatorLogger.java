@@ -51,7 +51,7 @@ public class SimulatorLogger
 	{
 		//TODO: ACERTAR OS CAMPOS COM ???
 		String packet_id = "Packet Identification: " + packet.getId() + "\n";
-		String time_elapsed = "Time Elapsed (from the start of the simulation): " + clock.execution_time_in_milis() + "ms\n";
+		String time_elapsed = "Time Elapsed (from the start of the program execution): " + clock.execution_time_in_milis() + "ms\n";
 		String sniffer_identification = "Sniffer: " + this.sniffer_name + "\n";
 		String internet_layer = "Internet Layer (IP)\n\tSource IP: " + packet.getIP_source() + "\n\tDestination IP: " + 
 		packet.getIP_destination() + "\n\tUpper Layer Protocol Identification: " + packet.getTransport().protocol + "\n\tPacket Length: " + 

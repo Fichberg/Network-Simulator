@@ -64,10 +64,13 @@ public class SimulatorLogger
 		upper_layers_size = packet.getApplication().get_length();
 		if(packet.getTransport().protocol== "TCP")
 		{
+			TransportLayer tl = packet.getTransport();
+			TCP tcp = (TCP) tl;
+			int ack = tcp.isACK() ? 1 : 0, syn = tcp.isSIN() ? 1 : 0, fin = tcp.isFIN() ? 1 : 0, seq_num = tcp.getSequence_number(), rec_num = tcp.getACK_number();
 			transport_layer = "Transport Layer ("+packet.getTransport().protocol+")\n\tSource Port: " + packet.getTransport().source_port + 
 			"\n\tDestination Port: " + packet.getTransport().destination_port + "\n\tPacket Length (this layer + upper layer): " + 
-			packet.getTransport().length + " + " + upper_layers_size + "\n\tSequence Number: " + "???" + "\n\tRecognition Number: " + 
-			"???" + "\n\tBit ACK: " + "???" + "\n\tBit FIN: " + "???" + "\n\tBit SYN: " + "???" + "\n";
+			packet.getTransport().length + " + " + upper_layers_size + "\n\tSequence Number: " + seq_num + "\n\tRecognition Number: " + 
+			rec_num + "\n\tBit ACK: " + ack + "\n\tBit FIN: " + fin + "\n\tBit SYN: " + syn + "\n";
 		}
 		else
 		{

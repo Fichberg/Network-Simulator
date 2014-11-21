@@ -122,6 +122,8 @@ public class Host extends Node
 
 		
 		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
+		transport_layer.setLength(app.get_length());
+		
 		app_pack.setTransport(transport_layer);
 		app_pack.getTransport().protocol = "TCP";
 		app_pack.setLength(transport_layer.getLength()); //+ tamanho do PACKET!
@@ -171,15 +173,20 @@ public class Host extends Node
 		//mandando apenas um pacote
 		else 
 		{
+			TCP transport = (TCP) app_pack.getTransport();
+			transport.setACK_number(1);
+			transport.setSequence_number(1);
+			packet.setTransport(transport);
+			
 			while(!got_ACK(1))
 			{
 				send_packet(packet);
 				synchronized (this) 
 				{
-					wait(1000); //timeout
+					wait(100); //timeout
 				}
-				
 			}
+			System.out.println("ack recebido");
 		}
 			
 	}
@@ -190,7 +197,8 @@ public class Host extends Node
 		Iterator<Packet> itr = this.buffer.iterator();
 		while (itr.hasNext())
 		{
-			TCP transport = (TCP) itr.next().getTransport();
+			Packet packet = itr.next();
+			TCP transport = (TCP) packet.getTransport();//itr.next().getTransport();
 			if (transport.getACK_number() == ACK)
 				return true;
 		}
@@ -257,11 +265,12 @@ public class Host extends Node
 				
 				TCP ack_transport = new TCP(transport.getDestination_port(), 
 						transport.getSource_port());
+				ack_transport.setProtocol("TCP");
 				ack_transport.setACK(false);
 				ack_transport.setACK_number(transport.getACK_number());
 				ack_transport.setSequence_number(transport.getSequence_number());
 				
-				System.out.println("enviando ACK pelo pacote " + ack_packet.getId() + " para " + ack_packet.getIP_destination());
+				ack_packet.setTransport(ack_transport);
 				send_packet(ack_packet);
 			}
 		}
@@ -328,12 +337,13 @@ public class Host extends Node
 		String length  = String.valueOf(transport_layer.getSource_port());
 		       length += String.valueOf(transport_layer.getDestination_port());
 		transport_layer.setLength(app.get_length() + length.length());
+		transport_layer.setProtocol("UDP");
+		
 		app_pack.setLength(transport_layer.getLength());
 		app_pack.setIP_source(this.computer_ip);
 		app_pack.setIP_destination(destination);
 		app_pack.setProtocol(17);
 		app_pack.setTransport(transport_layer);
-		app_pack.getTransport().protocol = "UDP";
 		
 		return app_pack;
 	}

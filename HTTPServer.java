@@ -71,14 +71,14 @@ public class HTTPServer extends Agent {
 		
 		//envia pacote para a camada de transporte
 		Host h = (Host) this.node;
-/*		try 
+		try 
 		{
 			h.send_TCP_packet(app_pack);
 		} catch (InterruptedException e) 
 		{
 			System.err.println("Nao foi possivel enviar o pacote de " + this.name);
 			e.printStackTrace();
-		}	*/	
+		}	
 	}
 	
 	//interpreta uma requisição HTTP e responde de acordo

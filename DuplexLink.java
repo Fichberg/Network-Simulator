@@ -121,6 +121,13 @@ public class DuplexLink extends Thread
 	//passa pra frente o pacote de um nó para outro
 	public void forward_packet(Node sender, Packet packet)
 	{
+		//COLOCAR A LATENCIA AQUI!!!!!!!!!!
+	/*	try {
+			sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		Node receiver = null;
 		if (sender.equals(this.point_A))
 			receiver = this.point_B;

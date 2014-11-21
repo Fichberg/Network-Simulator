@@ -177,6 +177,8 @@ public class Host extends Node
 			transport.setACK_number(1);
 			transport.setSequence_number(1);
 			packet.setTransport(transport);
+			System.out.println("Host " + this.name + " vai enviar " + packet.getId());
+			
 			
 			while(!got_ACK(1))
 			{
@@ -186,7 +188,7 @@ public class Host extends Node
 					wait(100); //timeout
 				}
 			}
-			System.out.println("ack recebido");
+			System.out.println("Host " + this.name + " -> ACK para o pacote " + packet.getId());
 		}
 			
 	}
@@ -200,7 +202,10 @@ public class Host extends Node
 			Packet packet = itr.next();
 			TCP transport = (TCP) packet.getTransport();//itr.next().getTransport();
 			if (transport.getACK_number() == ACK)
+			{
+				this.buffer.remove(packet);
 				return true;
+			}
 		}
 		return false;
 	}

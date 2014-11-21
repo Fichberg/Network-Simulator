@@ -78,7 +78,7 @@ public class HTTPServer extends Agent {
 		{
 			System.err.println("Nao foi possivel enviar o pacote de " + this.name);
 			e.printStackTrace();
-		}	
+		}
 	}
 	
 	//interpreta uma requisição HTTP e responde de acordo

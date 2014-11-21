@@ -57,7 +57,7 @@ public class SimulatorLogger
 		packet.getIP_destination() + "\n\tUpper Layer Protocol Identification: " + packet.getTransport().protocol + "\n\tPacket Length: " + 
 		packet.getLength() + "\n\tTTL: " + packet.getTTL() + "\n";
 		String transport_layer;
-		if(packet.getTransport().protocol == "TCP")
+		if(packet.getTransport().protocol== "TCP")
 		{
 			transport_layer = "Transport Layer ("+packet.getTransport().protocol+")\n\tSource Port: " + packet.getTransport().source_port + 
 			"\n\tDestination Port: " + packet.getTransport().destination_port + "\n\tSequence Number: " + "???" + "\n\tRecognition Number: " + 

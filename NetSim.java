@@ -12,7 +12,8 @@ public class NetSim
 		if (check_arguments(args) == false)
 			invalid_argument_notification();
 		
-		InputReader ir = new InputReader(args[0]);
+		Clock clock = new Clock();
+		InputReader ir = new InputReader(args[0], clock);
 		init_all_nodes(ir);
 		
 		//inicia o relógio do simulador

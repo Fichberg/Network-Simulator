@@ -18,6 +18,7 @@ public class DuplexLink extends Thread
 		this.point_B = point_B;
 		this.capacity = capacity;
 		this.latency = latency;
+		this.sniffer = null;
 	}
 
 	//setters
@@ -64,10 +65,21 @@ public class DuplexLink extends Thread
 	//verifica se o link contém as duas pontas
 	public boolean has_edges(String point_A, String point_B)
 	{
+		String []split_str;
+		if(point_A.charAt(0) == 'r')
+		{
+			split_str = point_A.split("\\.", 2);
+			point_A = split_str[0];
+		}
+		if(point_B.charAt(0) == 'r')
+		{
+			split_str = point_B.split("\\.", 2);
+			point_B = split_str[0];
+		}
 		String edge_one = this.point_A.get_name();
 		String edge_two = this.point_B.get_name();
-		if ( (edge_one.equals(point_A) || edge_one.equals(point_B)) &&
-			 (edge_two.equals(point_A) || edge_two.equals(point_B)))
+		if ( (edge_one.equals(point_A) && edge_two.equals(point_B)) ||
+			 (edge_two.equals(point_A) && edge_one.equals(point_B)))
 			return true;
 		return false;
 	}
@@ -120,6 +132,8 @@ public class DuplexLink extends Thread
 			return;
 		}
 		receiver.receive_packet(this, packet);
-	}
 
+		if(this.sniffer != null) //Se este link tem um sniffer....
+			this.sniffer.write_capture(packet);
+	}
 }

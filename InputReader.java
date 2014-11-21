@@ -13,11 +13,12 @@ public class InputReader
 	private HashMap<Float, String> commands;     //Dicionário com o programa do simulador
 	private HashMap<String, String> dns_table;   //Tabela de hosts para DNS
 	private ArrayList<DuplexLink> duplex_links;  //Lista de objetos do tipo DuplexLink
-
+	private Clock clock;                         //Detém o tempo inicial da execucao. Sera passada para os sniffers
 
 	//Construtor
-	public InputReader(String file_name)
+	public InputReader(String file_name, Clock clock)
 	{
+		this.clock    = clock;
 		this.hosts    = new HashMap<String, Host>();
 		this.routers  = new HashMap<String, Router>();
 		this.nodes    = new HashMap<String, Node>();
@@ -112,8 +113,7 @@ public class InputReader
 			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+)$"), 
 			
 			//10: sniffer-link association
-			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+\\.?\\d+) "
-					+ "\\$(\\w+\\.?\\d+) \"(.+)\""), 
+			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+\\.?\\d+) " + "\\$(\\w+\\.?\\d+) \"(.+)\""),
 			
 			//11: main program
 			Pattern.compile("\\$\\w+ at (\\d+\\.?\\d+) \"(.+)\"") 
@@ -247,7 +247,7 @@ public class InputReader
 				this.agents.put(agent, https);
 				break;
 			case Sniffer:
-				Sniffer sniffer = new Sniffer(agent);
+				Sniffer sniffer = new Sniffer(agent, this.clock);
 				this.agents.put(agent, sniffer);
 				break;
 			default: break;

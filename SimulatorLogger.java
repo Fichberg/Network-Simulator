@@ -50,12 +50,15 @@ public class SimulatorLogger
 	private String build_message(Clock clock, Packet packet)
 	{
 		//TODO: ACERTAR OS CAMPOS COM ???
+		int protocol_id;
+		if(packet.getTransport().protocol == "TCP") protocol_id = 6;
+		else protocol_id = 17;
 		int upper_layers_size = packet.getTransport().length + packet.getApplication().get_length();
 		String packet_id = "Packet Identification: " + packet.getId() + "\n";
 		String time_elapsed = "Time Elapsed (from the start of the program execution): " + clock.execution_time_in_milis() + "ms\n";
 		String sniffer_identification = "Sniffer: " + this.sniffer_name + "\n";
 		String internet_layer = "Internet Layer (IP)\n\tSource IP: " + packet.getIP_source() + "\n\tDestination IP: " + 
-		packet.getIP_destination() + "\n\tUpper Layer Protocol Identification: " + packet.getTransport().protocol + "\n\tPacket Length (this layer + upper layers): " + 
+		packet.getIP_destination() + "\n\tUpper Layer Protocol Identification: " + protocol_id + "\n\tPacket Length (this layer + upper layers): " + 
 		packet.getLength() + " + " + upper_layers_size + "\n\tTTL: " + packet.getTTL() + "\n";
 		String transport_layer;
 		upper_layers_size = packet.getApplication().get_length();

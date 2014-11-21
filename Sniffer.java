@@ -6,10 +6,12 @@ public class Sniffer extends Agent {
 	private String name;                 //Nome do sniffer
 	private DuplexLink link;
 	private SimulatorLogger snifferLog;  //Logger
+	private Clock clock;                 //Guarda o tempo inicial de execucao
 	
 	//Construtor
-	public Sniffer(String name)
+	public Sniffer(String name, Clock clock)
 	{
+		this.clock = clock;
 		this.name = name;
 		this.snifferLog = new SimulatorLogger(name);
 	}
@@ -45,9 +47,9 @@ public class Sniffer extends Agent {
 
 	//funcao que escreve o log das capturas deste sniffer. Escreve em que tempo de execucao (em relacao ao inicio) a captura do pacote packet ocorreu.
 	//O booleano indica se e para imprimir no terminal. Ainda nao decidido se vai se manter na versao final  
-	public void write_capture(Clock clock, Packet packet, boolean print)
+	public void write_capture(Packet packet)
 	{
-		this.snifferLog.write_to_log(clock, packet, print);
+		this.snifferLog.write_to_log(this.clock, packet);
 	}
 
 	//funcao que imprime o conteudo do log deste sniffer no prompt. Esta funcao roda apenas ao terminar a aplicacao.

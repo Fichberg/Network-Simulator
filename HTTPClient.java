@@ -41,7 +41,6 @@ public class HTTPClient extends Agent {
 	{
 		Packet packet = process_command(command);
 		Host h = (Host) this.node;
-		System.out.println("h = " + this.node + "command = " + command);
 		try
 		{
 			h.send_TCP_packet(packet);

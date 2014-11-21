@@ -12,17 +12,14 @@ public class SimulatorLogger
 		this.log_file_name = System.getProperty("user.dir") + "/logs/" + sniffer_name + ".log";
 	}
 
-	//Escreve no log do sniffer. Adicionalmente, um valor booleano deve ser passado. 
-	//Se print for true, então a função também imprime a mensagem no terminal em tempo de execucao.
-	//clock recebido é o clock inicial do simulador
-	void write_to_log(Clock clock, Packet packet, boolean print)
+	//Escreve no log do sniffer. O clock recebido é o clock inicial do simulador
+	void write_to_log(Clock clock, Packet packet)
 	{
 		String message = build_message(clock, packet);
 		try 
 		{
 			PrintWriter log_writer = new PrintWriter(new FileWriter(this.log_file_name, true));
 	        log_writer.println(message);
-	        //if(print == true) System.out.println(message);
 	        log_writer.close();
 	    }
 	    catch(IOException e)
@@ -73,7 +70,7 @@ public class SimulatorLogger
 		}
 		String application_layer = "Application Layer ("+packet.getApplication().get_protocol() +")\n\tText Data: " + packet.getApplication().get_text();
 
-		return packet_id + time_elapsed + sniffer_identification + internet_layer + transport_layer + application_layer;
+		return packet_id + time_elapsed + sniffer_identification + internet_layer + transport_layer + application_layer + "\n\n";
 	}
 
 }

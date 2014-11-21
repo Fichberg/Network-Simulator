@@ -120,7 +120,7 @@ public class InputReader
 			Pattern.compile("set (\\w+) \\[new Agent/(\\w+)\\]"), 
 			
 			//9: agent-host association
-			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+)\\s*\\n"), 
+			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+)$"), 
 			
 			//10: sniffer-link association
 			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+\\.?\\d+) "

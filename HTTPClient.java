@@ -1,3 +1,5 @@
+import java.io.*;
+
 
 public class HTTPClient extends Agent {
 	
@@ -39,6 +41,7 @@ public class HTTPClient extends Agent {
 	{
 		Packet packet = process_command(command);
 		Host h = (Host) this.node;
+		System.out.println("h = " + this.node + "command = " + command);
 		packet = h.build_TCP_packet(packet);
 		h.send_packet(packet);
 	}

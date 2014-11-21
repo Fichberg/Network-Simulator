@@ -9,7 +9,7 @@ public class Packet {
 	private int length;                    //tamanho total do pacote
 	private String IP_source;              //IP de origem
 	private String IP_destination;         //IP de destino
-	private int protocol;                  //Protocolo da camada de transporte (TCP ou UDP)
+	private int protocol;                  //Protocolo da camada de transporte [TCP ou UDP]
 	private int TTL;                       //Time-to-live
 	private String data;                   //dados enviados pelo pacote
 	

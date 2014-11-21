@@ -25,7 +25,8 @@ CLASSES = \
 		TCP.java \
 		TransportLayer.java \
 		UDP.java \
-		Clock.java
+		Clock.java \
+		SimulatorLogger.java
 
 default: classes
 

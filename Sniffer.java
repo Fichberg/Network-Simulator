@@ -4,17 +4,14 @@ import java.util.logging.*;
 public class Sniffer extends Agent {
 
 	private String name;                 //Nome do sniffer
-	private String file_name;            //Nome do log file deste sniffer. <PATH do diretorio em que esta o NetSim>/logs/<Nome do sniffer>.log
 	private DuplexLink link;
-	private Logger snifferLog;           //Logger
+	private SimulatorLogger snifferLog;  //Logger
 	
 	//Construtor
 	public Sniffer(String name)
 	{
 		this.name = name;
-		this.file_name = System.getProperty("user.dir") + "/logs/" + name + ".log";
-		this.snifferLog = Logger.getLogger(name + "Log");
-		create_log();
+		this.snifferLog = new SimulatorLogger(name);
 	}
 	
 	//define onde a aplicação está localizada
@@ -33,52 +30,24 @@ public class Sniffer extends Agent {
 	{
 		return "Sniffer";
 	}
-
-	//funcao para criar o log que contera as informacoes das capturas de pacotes
-	public void create_log()
+/*-----------------------------------------------------------------------------------------------------------------------*/
+// O que fazer com este metodo nesta classe?! Este metodo foi adicionado em Agent.java!
+	public void receive_command(String command)
 	{
-		try
-		{
-			this.snifferLog.setLevel(Level.FINE);
-			FileHandler fh = new FileHandler(this.file_name, true);
-			this.snifferLog.addHandler(fh);
-			SimpleFormatter formatter = new SimpleFormatter();
-			fh.setEncoding("UTF-8");
-			fh.setFormatter(formatter);
-		} 
-		catch (IOException logger) 
-		{
-			System.err.println("Sniffer.java:51: failed to create a logger to \"" + this.name + "\": " + this.snifferLog);
-		}
+		System.out.println("TODO: ME OLHE NA LINHA 36 de Sniffer.java!");
+	}
+/*-----------------------------------------------------------------------------------------------------------------------*/
+
+	//funcao que escreve o log das capturas deste sniffer. Escreve em que tempo de execucao (em relacao ao inicio) a captura do pacote packet ocorreu.
+	//O booleano indica se e para imprimir no terminal. Ainda nao decidido se vai se manter na versao final  
+	public void write_capture(Clock clock, Packet packet, boolean print)
+	{
+		this.snifferLog.write_to_log(clock, packet, print);
 	}
 
-	//funcao que escreve o log das capturas deste sniffer
-	public void write_capture(String message)
-	{
-		this.snifferLog.fine(message);
-	}
-
-	//funcao que imprime o conteudo do log no prompt deste sniffer. Esta funcao roda apenas ao terminar a aplicacao.
+	//funcao que imprime o conteudo do log deste sniffer no prompt. Esta funcao roda apenas ao terminar a aplicacao.
 	public void read_captures()
 	{
-		try
-		{
-	    	FileReader inputFile = new FileReader(this.file_name);
-		    BufferedReader bufferReader = new BufferedReader(inputFile);
-		    String line;
-		    while ((line = bufferReader.readLine()) != null)
-         	   System.out.println(line);
-		    bufferReader.close();
-    	}
-    	catch(Exception e)
-    	{
-            System.err.println("Sniffer.java:75: Error while reading file:" + e.getMessage());                      
-  	  	}
-	}
-
-	public void receive_command(String command) 
-	{
-		// TODO Auto-generated method stub
-		
+		this.snifferLog.read_from_log();
 	}
 }

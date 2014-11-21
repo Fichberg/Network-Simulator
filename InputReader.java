@@ -10,7 +10,8 @@ public class InputReader
 	private HashMap<String, Node> nodes;         //Dicionário de nós <Nome do nó, Node>
 	private HashMap<String, Agent> agents;       //Dicionário de agentes <Nome do agente, Agent>
 	private HashMap<String, Node> apps;          //Dicionário do tipo <Nome do agente, Node>  
-	private HashMap<Float, String> commands;   //Dicionário com o programa do simulador
+	private HashMap<Float, String> commands;     //Dicionário com o programa do simulador
+	private HashMap<String, String> dns_table;   //Tabela de hosts para DNS
 	private ArrayList<DuplexLink> duplex_links;  //Lista de objetos do tipo DuplexLink
 
 
@@ -23,6 +24,7 @@ public class InputReader
 		this.agents   = new HashMap<String, Agent>();
 		this.apps     = new HashMap<String, Node>();
 		this.commands = new HashMap<Float, String>();
+		this.dns_table = new HashMap<String, String>();
 		this.duplex_links = new ArrayList<DuplexLink>();
 		read_input(file_name);
 	}
@@ -136,7 +138,7 @@ public class InputReader
 					case 8: set_agent(m.group(1), m.group(2)); break; 
 					case 9: attach_app_agent(m.group(1), m.group(2)); break; 
 					case 10: attach_sniffer_agent(m.group(1), m.group(2), m.group(3), m.group(4)); break;
-					case 11: System.out.println("set_simul"); set_simulation(m.group(1), m.group(2)); break;
+					case 11: set_simulation(m.group(1), m.group(2)); break;
 					default: break; 
 				
 				}
@@ -185,6 +187,7 @@ public class InputReader
 		h.set_computer_ip(IP);
 		h.set_router_ip(router);
 		h.set_dns_server_ip(DNS);
+		this.dns_table.put(host, IP);
 	}
 	
 	//5: configura um router associando um IP a uma interface do enlace
@@ -224,7 +227,7 @@ public class InputReader
 		switch(a)
 		{
 			case DNSServer:
-				DNSServer dnss = new DNSServer(agent);
+				DNSServer dnss = new DNSServer(agent, this.dns_table);
 				this.agents.put(agent, dnss);
 				break;
 			case FTPClient:
@@ -280,7 +283,6 @@ public class InputReader
 	//11: define o programa principal
 	private void set_simulation(String time, String command)
 	{
-		System.out.println("comandos: " + command);
 		this.commands.put(Float.parseFloat(time), command);
 	}
 	

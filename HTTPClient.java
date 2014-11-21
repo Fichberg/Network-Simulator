@@ -42,12 +42,25 @@ public class HTTPClient extends Agent {
 		Packet packet = process_command(command);
 		Host h = (Host) this.node;
 		System.out.println("h = " + this.node + "command = " + command);
-		packet = h.build_TCP_packet(packet);
-		h.send_packet(packet);
+		try
+		{
+			h.send_TCP_packet(packet);
+		}
+		catch(InterruptedException e)
+		{
+			System.err.println("Pacote " + packet.getId() + " nao pode ser enviado");
+			e.printStackTrace();
+		}
 	}
 	
 	//======================================
 	//COMMUNICATION
+	
+	//alerta recebimento de pacote
+	public void notify_agent(Packet packet)
+	{
+		
+	}
 	
 	//cria um pacote com dados da camada de aplicação
 	public Packet build_packet(String text, String dest_name)

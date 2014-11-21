@@ -30,13 +30,18 @@ public class Sniffer extends Agent {
 	{
 		return "Sniffer";
 	}
-/*-----------------------------------------------------------------------------------------------------------------------*/
-// O que fazer com este metodo nesta classe?! Este metodo foi adicionado em Agent.java!
+
+	//O Sniffer não faz nada com isso. É o preço a pagar por usar classes abstratas
 	public void receive_command(String command)
 	{
-		System.out.println("TODO: ME OLHE NA LINHA 36 de Sniffer.java!");
+
 	}
-/*-----------------------------------------------------------------------------------------------------------------------*/
+	
+	//método que alerta o sniffer sobre a transmissão de um pacote no link
+	public void notify_agent(Packet packet)
+	{
+		//write_capture(clock, packet, print);
+	}
 
 	//funcao que escreve o log das capturas deste sniffer. Escreve em que tempo de execucao (em relacao ao inicio) a captura do pacote packet ocorreu.
 	//O booleano indica se e para imprimir no terminal. Ainda nao decidido se vai se manter na versao final  

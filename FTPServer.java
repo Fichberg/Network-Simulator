@@ -32,4 +32,10 @@ public class FTPServer extends Agent {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	//alerta recebimento de pacote
+	public void notify_agent(Packet packet)
+	{
+		
+	}
 }

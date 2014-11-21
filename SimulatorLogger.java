@@ -71,7 +71,7 @@ public class SimulatorLogger
 			transport_layer = "Transport Layer ("+packet.getTransport().protocol+")\n\tSource Port: " + packet.getTransport().source_port + 
 			"\n\tDestination Port: " + packet.getTransport().destination_port + "\n\tPacket Length: " + packet.getTransport().length + "\n";
 		}
-		String application_layer = "Application Layer ("+packet.getApplication().protocol+")\n\tText Data: " + packet.getApplication().text;
+		String application_layer = "Application Layer ("+packet.getApplication().get_protocol() +")\n\tText Data: " + packet.getApplication().get_text();
 
 		return packet_id + time_elapsed + sniffer_identification + internet_layer + transport_layer + application_layer;
 	}

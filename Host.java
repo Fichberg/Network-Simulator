@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Host extends Node
@@ -76,8 +77,9 @@ public class Host extends Node
 	//COMMUNICATION
 	
 	//envia pacote pelo enlace do host
-	public void send_packet(Packet packet)
+	private void send_packet(Packet packet)
 	{
+		System.out.println("Host " + name + " enviando pacote " + packet.getId());
 		this.link.forward_packet(this, packet);
 	}	
 	
@@ -89,7 +91,8 @@ public class Host extends Node
 		{
 			synchronized (this) 
 			{
-				System.out.println("recebi o pacote: " + packet.getId());
+				System.out.println("Host " + name + " recebeu o pacote: " + packet.getId());
+				this.agent.notify_agent(packet);
 				notify(); //avisa que um pacote chegou
 			}
 		}
@@ -107,18 +110,15 @@ public class Host extends Node
 	}
 	
 	//constrói pacote TCP a partir da camada de aplicação
-	public Packet build_TCP_packet(Packet app_pack) 
+	private Packet build_TCP_packet(Packet app_pack) throws InterruptedException 
 	{
 		ApplicationLayer app = app_pack.getApplication();
 		String destination_host = app.get_dest_name();
 		
 		//resolve o nome do destino
 		if (!destination_host.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
-		{
-			System.out.println("DNS_LOOKUP MISSING");
-			//TODO DNS_lookup (destination_host);
-		}
-		
+			destination_host = DNS_lookup(destination_host);
+
 		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
 		app_pack.setTransport(transport_layer);
 		app_pack.setLength(transport_layer.getLength()); //+ tamanho do PACKET!
@@ -131,7 +131,7 @@ public class Host extends Node
 	}
 	
 	//fragmenta pacotes de acordo com o MSS = 1460
-	public int chop_data(Packet packet, int offset)
+	private int chop_data(Packet packet, int offset)
 	{
 		String data = packet.get_data();
 		char[] data_in_chars = data.toCharArray();
@@ -141,8 +141,10 @@ public class Host extends Node
 	}
 	
 	//envia um pacote TCP de acordo com a política de controle de congestionamento
-	public void send_TCP_packet(Packet packet) throws InterruptedException
+	public void send_TCP_packet(Packet app_pack) throws InterruptedException
 	{
+		Packet packet = build_TCP_packet(app_pack);
+		
 		//mandando pacotes fragmentados
 		if (packet.getLength() > 1460)
 		{
@@ -240,10 +242,79 @@ public class Host extends Node
 	//UDP
 	
 	//requisita o endereço IP de um host
-	public String DNS_lookup(String hostname)
+	public String DNS_lookup(String hostname) throws InterruptedException
 	{
+		String protocol = "DNS";
+		String text = hostname + ": type A, class IN";
+		String dest = this.dns_server_ip;
+		ApplicationLayer app = new ApplicationLayer(protocol, text, "", dest, 53, 34628);
+		Packet packet = new Packet();
+		packet.setApplication(app);
+		packet = build_UDP_packet(packet);
+		
+		send_packet(packet);
+		synchronized (this) 
+		{
+			int timeout = 5;
+			while (timeout != 0)
+			{
+				String response = DNS_resolve();
+				if (response != null)
+					return response;
+				wait(100);
+				timeout--;
+			}
+		}
+		
 		return null;
 	}
+	
+	//extrai o endereço devolvido por um servidor DNS
+	private String DNS_resolve()
+	{
+		Iterator<Packet> itr = this.buffer.iterator();
+		Pattern p = Pattern.compile("addr (\\d+\\.\\d+\\.\\d+\\.\\d+)");
+
+		//procura uma requisição DNS na lista de pacotes recebidos
+		while (itr.hasNext())
+		{
+			Packet packet = itr.next();
+			Matcher m = p.matcher(packet.getApplication().get_text());
+			this.buffer.remove(packet);
+			if (m.find())
+				return m.group(1);
+		}
+
+		//endereço não encontrado
+		return null;
+	}
+	
+	//recebe um pacote com a camada de aplicação e insere uma camada UDP
+	private Packet build_UDP_packet(Packet app_pack)
+	{
+		ApplicationLayer app = app_pack.getApplication();
+		String destination   = app.get_dest_name();
+		UDP transport_layer  = new UDP(app.get_source_port(), app.get_dest_port());
+		String length  = String.valueOf(transport_layer.getSource_port());
+		       length += String.valueOf(transport_layer.getDestination_port());
+		transport_layer.setLength(app.get_length() + length.length());
+		app_pack.setLength(transport_layer.getLength());
+		app_pack.setIP_source(this.computer_ip);
+		app_pack.setIP_destination(destination);
+		app_pack.setProtocol(17);
+		app_pack.setTransport(transport_layer);
+		
+		return app_pack;
+	}
+	
+	//envia um pacote UDP (visível para a camada de aplicação)
+	public void send_UDP_packet(Packet app_pack)
+	{
+		Packet packet = build_UDP_packet(app_pack);
+		send_packet(packet);
+	}
+	
+	
 
 
 	

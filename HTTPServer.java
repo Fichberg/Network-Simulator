@@ -32,4 +32,10 @@ public class HTTPServer extends Agent {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	//alerta recebimento de pacote
+	public void notify_agent(Packet packet)
+	{
+		
+	}
 }

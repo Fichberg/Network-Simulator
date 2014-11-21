@@ -86,7 +86,13 @@ public class Host extends Node
 	{
 		this.buffer.add(packet);
 		if (this.buffer.size() == this.sliding_window)
-			this.notify(); //avisa que um pacote chegou
+		{
+			synchronized (this) 
+			{
+				System.out.println("recebi o pacote: " + packet.getId());
+				notify(); //avisa que um pacote chegou
+			}
+		}
 	}
 	
 	
@@ -109,6 +115,7 @@ public class Host extends Node
 		//resolve o nome do destino
 		if (!destination_host.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
 		{
+			System.out.println("DNS_LOOKUP MISSING");
 			//TODO DNS_lookup (destination_host);
 		}
 		
@@ -162,7 +169,11 @@ public class Host extends Node
 			while(!got_ACK(1))
 			{
 				send_packet(packet);
-				wait(100); //timeout
+				synchronized (this) 
+				{
+					wait(100); //timeout
+				}
+				
 			}
 		}
 			
@@ -200,7 +211,11 @@ public class Host extends Node
 			
 			//verifica se a janela enviada chegou ao destino
 			Iterator<Integer> ack_itr = acks.iterator();
-			wait(100); //timeout
+			synchronized (this) 
+			{
+				wait(100); //timeout
+			}
+			
 			recebeu = true;
 			while(ack_itr.hasNext())
 			{

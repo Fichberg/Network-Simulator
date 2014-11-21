@@ -98,7 +98,7 @@ public class NetSim
 		Node[] nodes = ir.get_all_nodes();
 		for (Node n : nodes)
 		{
-			System.out.println("Initializing node "+ n.get_name());
+			//System.out.println("Initializing node "+ n.get_name());
 			n.start();
 		}
 	}

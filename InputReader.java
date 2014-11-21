@@ -66,19 +66,6 @@ public class InputReader
 		    	//System.err.println("InputReader.java:44: " + e);
 		    }
 		}
-		//TESTE (para verificar o funcionamento do roteamento) -- APAGAR ISSO NO FUTURO!
-		/*Iterator<Router> roteadores = this.routers.values().iterator();
-		while (roteadores.hasNext()) {
-			Router r = roteadores.next();
-			System.out.println("iniciando o roteador " + r.get_name());
-			r.start();
-		}
-		//troque os valores aqui manualmente para testar :)
-		Packet packet = new Packet();
-		packet.setIP_source("10.0.0.1");
-		packet.setIP_destination("192.168.2.2");
-		Host h0 = this.hosts.get("h0");
-		h0.send_packet(packet);*/
 	}
 
 	//========================================
@@ -91,7 +78,7 @@ public class InputReader
 		Pattern[] patterns =
 		{
 			//0: empty or commented line
-			Pattern.compile("^\\s*\\n|^#\\s*\\w+"),
+			Pattern.compile("^\\s*\\n|^#\\s*[\\w\\$]+"),
 				
 			//1: host setting
 			Pattern.compile("set (\\w+) \\[\\$\\w+ host\\]"),
@@ -138,7 +125,7 @@ public class InputReader
 			{
 				switch(i)
 				{
-					case 0: break;
+					case 0: return;
 					case 1: set_host(m.group(1)); break; 
 					case 2: set_router(m.group(1), m.group(2)); break; 
 					case 3: set_duplex_link(m.group(1), m.group(2), m.group(3), m.group(4)); break; 
@@ -149,7 +136,7 @@ public class InputReader
 					case 8: set_agent(m.group(1), m.group(2)); break; 
 					case 9: attach_app_agent(m.group(1), m.group(2)); break; 
 					case 10: attach_sniffer_agent(m.group(1), m.group(2), m.group(3), m.group(4)); break;
-					case 11: set_simulation(m.group(1), m.group(2)); break;
+					case 11: System.out.println("set_simul"); set_simulation(m.group(1), m.group(2)); break;
 					default: break; 
 				
 				}
@@ -270,6 +257,7 @@ public class InputReader
 		Agent a = this.agents.get(agent);
 		Host h  = this.hosts.get(host);
 		h.set_agent(a);
+		a.set_residence(h);
 		this.apps.put(agent, h);
 	}
 	
@@ -292,6 +280,7 @@ public class InputReader
 	//11: define o programa principal
 	private void set_simulation(String time, String command)
 	{
+		System.out.println("comandos: " + command);
 		this.commands.put(Float.parseFloat(time), command);
 	}
 	

@@ -27,10 +27,15 @@ public class DNSServer extends Agent {
 		return "DNSServer";
 	}
 
+	//recebe comando do simulador
 	public void receive_command(String command) 
 	{
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
+	
+	//=============================================
+	//COMMUNICATION
+	
+	//
 
 }

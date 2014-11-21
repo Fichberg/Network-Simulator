@@ -6,6 +6,13 @@ public class UDP extends TransportLayer{
 	private int destination_port;
 	private int length;
 	
+	//Construtor
+	public UDP(int source, int destination)
+	{
+		this.source_port = source;
+		this.destination_port = destination;
+	}
+	
 	
 	//setters e getters
 	public String getProtocol() {

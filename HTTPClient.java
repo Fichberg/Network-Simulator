@@ -47,7 +47,8 @@ public class HTTPClient extends Agent {
 		}
 		catch(InterruptedException e)
 		{
-			System.err.println("Pacote " + packet.getId() + " nao pode ser enviado");
+			System.err.println("Pacote " + packet.getId() + " nao pode ser enviado"
+					         + "por " + this.name);
 			e.printStackTrace();
 		}
 	}
@@ -58,7 +59,7 @@ public class HTTPClient extends Agent {
 	//alerta recebimento de pacote
 	public void notify_agent(Packet packet)
 	{
-		
+		System.out.println("recebi a resposta com o arquivo: " + packet.get_data());
 	}
 	
 	//cria um pacote com dados da camada de aplicação
@@ -75,7 +76,7 @@ public class HTTPClient extends Agent {
 	{
 		String[] split = command.split(" ");
 		String text = split[0] + " / HTTP/1.1 \r\n"
-		                       + "host: " + split[1] + "\r\n";
+		                       + "host: " + split[1] + " \r\n";
 		return build_packet(text, split[1]);
 	}	
 	

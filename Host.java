@@ -87,6 +87,7 @@ public class Host extends Node
 	public void receive_packet(DuplexLink link, Packet packet)
 	{
 		this.buffer.add(packet);
+		reply_if_isACK(packet);
 		if (this.buffer.size() == this.sliding_window)
 		{
 			synchronized (this) 
@@ -119,6 +120,7 @@ public class Host extends Node
 		if (!destination_host.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
 			destination_host = DNS_lookup(destination_host);
 
+		
 		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
 		app_pack.setTransport(transport_layer);
 		app_pack.setLength(transport_layer.getLength()); //+ tamanho do PACKET!
@@ -173,7 +175,7 @@ public class Host extends Node
 				send_packet(packet);
 				synchronized (this) 
 				{
-					wait(100); //timeout
+					wait(1000); //timeout
 				}
 				
 			}
@@ -236,6 +238,33 @@ public class Host extends Node
 			else
 				this.sliding_window = 1;
 		}
+	}
+	
+	private void reply_if_isACK(Packet packet)
+	{
+		TransportLayer tl = packet.getTransport();
+		if (tl instanceof TCP)
+		{
+			TCP transport = (TCP) tl;
+			if (transport.isACK())
+			{
+				Packet ack_packet = new Packet();
+				ack_packet.setIP_source(this.computer_ip);
+				ack_packet.setIP_destination(packet.getIP_source());
+				ack_packet.setProtocol(6);
+				ack_packet.setTTL(64);
+				
+				TCP ack_transport = new TCP(transport.getDestination_port(), 
+						transport.getSource_port());
+				ack_transport.setACK(false);
+				ack_transport.setACK_number(transport.getACK_number());
+				ack_transport.setSequence_number(transport.getSequence_number());
+				
+				System.out.println("enviando ACK pelo pacote " + ack_packet.getId() + " para " + ack_packet.getIP_destination());
+				send_packet(ack_packet);
+			}
+		}
+		
 	}
 	
 	//==============================================

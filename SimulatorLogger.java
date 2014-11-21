@@ -50,23 +50,27 @@ public class SimulatorLogger
 	private String build_message(Clock clock, Packet packet)
 	{
 		//TODO: ACERTAR OS CAMPOS COM ???
+		int upper_layers_size = packet.getTransport().length + packet.getApplication().get_length();
 		String packet_id = "Packet Identification: " + packet.getId() + "\n";
 		String time_elapsed = "Time Elapsed (from the start of the program execution): " + clock.execution_time_in_milis() + "ms\n";
 		String sniffer_identification = "Sniffer: " + this.sniffer_name + "\n";
 		String internet_layer = "Internet Layer (IP)\n\tSource IP: " + packet.getIP_source() + "\n\tDestination IP: " + 
-		packet.getIP_destination() + "\n\tUpper Layer Protocol Identification: " + packet.getTransport().protocol + "\n\tPacket Length: " + 
-		packet.getLength() + "\n\tTTL: " + packet.getTTL() + "\n";
+		packet.getIP_destination() + "\n\tUpper Layer Protocol Identification: " + packet.getTransport().protocol + "\n\tPacket Length (this layer + upper layers): " + 
+		packet.getLength() + " + " + upper_layers_size + "\n\tTTL: " + packet.getTTL() + "\n";
 		String transport_layer;
+		upper_layers_size = packet.getApplication().get_length();
 		if(packet.getTransport().protocol== "TCP")
 		{
 			transport_layer = "Transport Layer ("+packet.getTransport().protocol+")\n\tSource Port: " + packet.getTransport().source_port + 
-			"\n\tDestination Port: " + packet.getTransport().destination_port + "\n\tSequence Number: " + "???" + "\n\tRecognition Number: " + 
+			"\n\tDestination Port: " + packet.getTransport().destination_port + "\n\tPacket Length (this layer + upper layer): " + 
+			packet.getTransport().length + " + " + upper_layers_size + "\n\tSequence Number: " + "???" + "\n\tRecognition Number: " + 
 			"???" + "\n\tBit ACK: " + "???" + "\n\tBit FIN: " + "???" + "\n\tBit SYN: " + "???" + "\n";
 		}
 		else
 		{
 			transport_layer = "Transport Layer ("+packet.getTransport().protocol+")\n\tSource Port: " + packet.getTransport().source_port + 
-			"\n\tDestination Port: " + packet.getTransport().destination_port + "\n\tPacket Length: " + packet.getTransport().length + "\n";
+			"\n\tDestination Port: " + packet.getTransport().destination_port + "\n\tPacket Length (this layer + upper layer): " + 
+			packet.getTransport().length + " + " + upper_layers_size + "\n";
 		}
 		String application_layer = "Application Layer ("+packet.getApplication().get_protocol() +")\n\tText Data: " + packet.getApplication().get_text();
 

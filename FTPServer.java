@@ -84,12 +84,14 @@ public class FTPServer extends Agent {
 		Matcher m = p.matcher(text);
 		Pattern p1 = Pattern.compile("USER \\S");
 		Matcher m1 = p1.matcher(text);
+		Pattern p2 = Pattern.compile("PUT \\S");
+		Matcher m2 = p2.matcher(text);
 		if (m.find())
 		{
 			String filename = m.group(1);
 			if (filename.matches("\\s*") || filename == null)
 				filename = "index.html";
-			System.out.println("é pra abrir o arquivo " + filename);
+			System.out.println("é pra enviar o arquivo " + filename);
 			return read_file(filename);
 		}
 		else if(m1.find())
@@ -99,6 +101,12 @@ public class FTPServer extends Agent {
 				username = "Anonymous";
 			System.out.println("é para saudar o usuario " + username);
 			return username;
+		}
+		else if(m2.find())
+		{
+			String filename = m.group(1);
+			System.out.println("é pra receber o arquivo " + filename);
+			return read_file(filename);
 		}
 		return null;
 	}

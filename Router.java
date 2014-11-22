@@ -161,9 +161,11 @@ public class Router extends Node
 		int enlace = this.links.get(link);
 		RouterBuffer buffer = this.buffers.get(enlace);
 		
-		//dropando pacote: buffer lotado
-		if (buffer.is_full()) {
-			System.out.println("Buffer's full on port "+ enlace +" from router "+ this.name);
+		packet.decrease_ttl();
+		//dropando pacote: buffer lotado ou TTL == 0
+		if (buffer.is_full() || packet.getTTL() == 0) {
+			if(buffer.is_full()) System.out.println("Buffer's full on port "+ enlace +" from router "+ this.name);
+			else System.out.println("Packet "+ getId() + " TTL reached 0 and is being dropped.");
 			return;	
 		}
 	

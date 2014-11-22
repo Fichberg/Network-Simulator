@@ -80,31 +80,27 @@ public class FTPServer extends Agent {
 	//interpreta uma requisição FTP e responde de acordo
 	private String process_FTP_request(String text)
 	{
-		Pattern p = Pattern.compile("GET \\S");
+		Pattern p = Pattern.compile("GET FTP");
 		Matcher m = p.matcher(text);
-		Pattern p1 = Pattern.compile("USER \\S");
+		Pattern p1 = Pattern.compile("USER FTP");
 		Matcher m1 = p1.matcher(text);
-		Pattern p2 = Pattern.compile("PUT \\S");
+		Pattern p2 = Pattern.compile("PUT FTP");
 		Matcher m2 = p2.matcher(text);
 		if (m.find())
 		{
-			String filename = m.group(1);
-			if (filename.matches("\\s*") || filename == null)
-				filename = "index.html";
+			String filename = "index.html";
 			System.out.println("é pra enviar o arquivo " + filename);
 			return read_file(filename);
 		}
 		else if(m1.find())
 		{
-			String username = m.group(1);
-			if (username.matches("\\s*") || username == null)
-				username = "Anonymous";
+			String username = "USER Anonymous";
 			System.out.println("é para saudar o usuario " + username);
 			return username;
 		}
 		else if(m2.find())
 		{
-			String filename = m.group(1);
+			String filename = "file.txt";
 			System.out.println("é pra receber o arquivo " + filename);
 			return read_file(filename);
 		}

@@ -1,8 +1,9 @@
+import java.util.Iterator;
 import java.util.LinkedList;
 
 //Esta classe representa um buffer do router. Funciona em FIFO
-public class RouterBuffer {
-
+public class RouterBuffer 
+{
 	private int enlace_nr;
 	private LinkedList<Packet> buffer;
 	private int max_size;
@@ -29,13 +30,12 @@ public class RouterBuffer {
 	//adiciona pacote à fila
 	public void put_packet(Packet packet)
 	{
-		this.buffer.add(packet);
+		this.buffer.addLast(packet);
 	}
 	
 	//tira um pacote da fila
 	public Packet pull_packet()
 	{
-		//pollFirst retorna null se a fila estiver vazia :)
 		return this.buffer.pollFirst();
 	}
 	
@@ -45,6 +45,14 @@ public class RouterBuffer {
 		if (this.buffer.size() == this.max_size)
 			return true;
 		return false;
+	}
+	
+	//exibe todos os pacotes que estão na fila
+	public void show_packets()
+	{
+		Iterator<Packet> itr = this.buffer.iterator();
+		while (itr.hasNext())
+			System.out.println("Port " + this.enlace_nr + ": " + itr.next().getId());
 	}
 	
 }

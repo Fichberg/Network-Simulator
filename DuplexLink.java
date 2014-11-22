@@ -122,12 +122,14 @@ public class DuplexLink extends Thread
 	public void forward_packet(Node sender, Packet packet)
 	{
 		//COLOCAR A LATENCIA AQUI!!!!!!!!!!
-	/*	try {
+		try {
 			sleep(100);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
+		//System.out.println("repassando pacote " + packet.getId() + " DE " + sender.get_name());
+		
 		Node receiver = null;
 		if (sender.equals(this.point_A))
 			receiver = this.point_B;
@@ -138,7 +140,11 @@ public class DuplexLink extends Thread
 			System.err.println("You can't send packets if you don't belong to me!");
 			return;
 		}
-		receiver.receive_packet(this, packet);
+		synchronized (receiver) 
+		{
+			receiver.receive_packet(this, packet);
+		}
+		
 
 		if(this.sniffer != null) //Se este link tem um sniffer....
 			this.sniffer.write_capture(packet);

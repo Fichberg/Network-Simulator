@@ -80,6 +80,12 @@ public class Host extends Node
 	private void send_packet(Packet packet)
 	{
 		System.out.println("Host " + name + " enviando pacote " + packet.getId());
+		try {
+			sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.link.forward_packet(this, packet);
 	}	
 	
@@ -120,6 +126,11 @@ public class Host extends Node
 		if (!destination_host.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
 			destination_host = DNS_lookup(destination_host);
 
+		if (destination_host == null)
+		{
+			System.err.println("Destination unreachable");
+			return null;
+		}
 		
 		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
 		transport_layer.setLength(app.get_length());
@@ -149,6 +160,8 @@ public class Host extends Node
 	public void send_TCP_packet(Packet app_pack) throws InterruptedException
 	{
 		Packet packet = build_TCP_packet(app_pack);
+		if (packet == null)
+			return;
 		
 		//mandando pacotes fragmentados
 		if (packet.getLength() > 1460)
@@ -185,7 +198,7 @@ public class Host extends Node
 				send_packet(packet);
 				synchronized (this) 
 				{
-					wait(100); //timeout
+					wait(1600); //timeout
 				}
 			}
 			System.out.println("Host " + this.name + " -> ACK para o pacote " + packet.getId());
@@ -254,6 +267,7 @@ public class Host extends Node
 		}
 	}
 	
+	//se um pacote TCP tiver bit ACK ligado, responde host acusando recebimento
 	private void reply_if_isACK(Packet packet)
 	{
 		TransportLayer tl = packet.getTransport();
@@ -308,7 +322,7 @@ public class Host extends Node
 				String response = DNS_resolve();
 				if (response != null)
 					return response;
-				wait(100);
+				wait(600);
 				timeout--;
 			}
 		}

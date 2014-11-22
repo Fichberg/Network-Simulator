@@ -36,7 +36,7 @@ public class Router extends Node
 		{
 			try 
 			{   //tempo de latência do roteador para processar pacote
-				sleep((long) this.performance);
+				sleep((long) this.performance);//this.performance);
 			} catch (InterruptedException e) 
 			{
 				e.printStackTrace();
@@ -176,19 +176,22 @@ public class Router extends Node
 	public void receive_packet(DuplexLink link, Packet packet)
 	{
 		int enlace = this.links.get(link);
+		System.out.println("Router " + this.name + " recebeu " + packet.getId() + " na porta " + enlace);
 		RouterBuffer buffer = this.buffers.get(enlace);
 		
 		//dropando pacote: buffer lotado
-		if (buffer.is_full())
+		if (buffer.is_full()) {
+			System.out.println("Buffer's full on port "+ enlace +" from router "+ this.name);
 			return;	
-		
+		}
+	
 		buffer.put_packet(packet);
 	}
 	
 	//roteia o pacote de uma interface para outra	
 	public void send_packet(Packet packet, int destination_port) 
 	{
-		System.out.println("Pacote: " + packet.getId() + " passando por: " + this.name);
+		//System.out.println("Pacote: " + packet.getId() + " passando por: " + this.name);
 		DuplexLink link = this.get_link(destination_port);
 		link.forward_packet(this, packet);
 	}

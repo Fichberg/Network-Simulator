@@ -66,7 +66,7 @@ public class HTTPClient extends Agent {
 	public Packet build_packet(String text, String dest_name)
 	{
 		ApplicationLayer app = new ApplicationLayer("HTTP", text, " ", dest_name, 80, 54823);
-		Packet packet = new Packet();
+		Packet packet = new Packet("TCP");
 		packet.setApplication(app);
 		return packet;
 	}

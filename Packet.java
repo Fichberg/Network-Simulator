@@ -14,14 +14,28 @@ public class Packet {
 	private String data;                   //dados enviados pelo pacote
 	
 	
-	//Construtor
+	//Construtores
 	public Packet() {
 		this.id = UUID.randomUUID();
+		this.TTL = 64;
+	}
+	public Packet(String protocol)
+	{
+		this.id = UUID.randomUUID();
+		this.TTL = 64;
+		if (protocol.equalsIgnoreCase("TCP"))
+			this.protocol = 6;
+		else if (protocol.equalsIgnoreCase("UDP"))
+			this.protocol = 17;
 	}
 	
 	//getters e setters (GERADO AUTOMATICAMENTE, REVISAR!)
 	public UUID getId() {
 		return id;
+	}
+	public void set_new_Id()
+	{
+		this.id = UUID.randomUUID();
 	}
 	public ApplicationLayer getApplication() {
 		return application;

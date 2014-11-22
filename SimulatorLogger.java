@@ -57,9 +57,19 @@ public class SimulatorLogger
 			protocol_id = 17;
 		
 		if(packet.getApplication() != null)
-			upper_layers_size = packet.getTransport().length + packet.getApplication().get_length();
+		{
+			if(packet.getTransport().get_protocol() == "TCP")	
+				upper_layers_size = 20 /*Desconsiderando opcoes no header do TCP*/ + packet.getApplication().get_length();
+			else
+				upper_layers_size = 8 /*Tamanho header minimo do UDP*/ + packet.getApplication().get_length();
+		}
 		else
-			upper_layers_size = packet.getTransport().length;
+		{
+			if(packet.getTransport().get_protocol() == "TCP")	
+				upper_layers_size = 20 /*Desconsiderando opcoes no header do TCP*/;
+			else
+				upper_layers_size = 8 /*Tamanho header minimo do UDP*/;
+		}
 	
 		String packet_id = "Packet Identification: " + packet.getId() + "\n";
 		String time_elapsed = "Time Elapsed (from the start of the program execution): " 
@@ -68,12 +78,14 @@ public class SimulatorLogger
 		String internet_layer = "Internet Layer (IP)\n\tSource IP: " + packet.getIP_source() 
 				             + "\n\tDestination IP: " + packet.getIP_destination() 
 				             + "\n\tUpper Layer Protocol Identification: " + protocol_id 
-				             + "\n\tPacket Length (this layer + upper layers): "
-				             + packet.getLength() + " + " + upper_layers_size + "\n\tTTL: " 
+				             + "\n\tPacket Length (IP header + upper layers): "
+				             + " 20 + " + upper_layers_size + "\n\tTTL: " //Considerando o tamanho mínimo do header do IPv4 = 20 
 				             + packet.getTTL() + "\n";
 		String transport_layer = null;
 		if(packet.getApplication() != null)
 			upper_layers_size = packet.getApplication().get_length();
+		else
+			upper_layers_size = 0;
 		
 		if(packet.getTransport().get_protocol() == "TCP")
 		{
@@ -85,8 +97,8 @@ public class SimulatorLogger
 			int rec_num = tcp.getACK_number();
 			transport_layer = "Transport Layer (" + tcp.get_protocol() + ")\n\tSource Port: " 
 			                + tcp.getSource_port() + "\n\tDestination Port: " 
-					        + tcp.getDestination_port() + "\n\tPacket Length (this layer + "
-					        + "upper layer): " + tcp.getLength() + " + " + upper_layers_size 
+					        + tcp.getDestination_port() + "\n\tPacket Length (TCP header + "
+					        + "upper layer): " + " 20 + " + upper_layers_size  //Considerando TCP header = 20bytes (sem opcoes). http://en.wikipedia.org/wiki/Transmission_Control_Protocol
 					        + "\n\tSequence Number: " + seq_num + "\n\tRecognition Number: " 
 					        + rec_num + "\n\tBit ACK: " + ack + "\n\tBit FIN: " + fin 
 					        + "\n\tBit SYN: " + syn + "\n";
@@ -96,9 +108,9 @@ public class SimulatorLogger
 			UDP udp = (UDP) packet.getTransport();
 			transport_layer = "Transport Layer ("+ udp.get_protocol()+")\n\tSource Port: " 
 			                + udp.getSource_port() + "\n\tDestination Port: " 
-					        + udp.getDestination_port() + "\n\tPacket Length (this layer + "
+					        + udp.getDestination_port() + "\n\tPacket Length (UDP header + "
 					        + "upper layer): " 
-					        + udp.getLength() + " + " + upper_layers_size + "\n";
+					        + " 8 + " + upper_layers_size + "\n"; //Considerando UDP header = 8 bytes. http://en.wikipedia.org/wiki/User_Datagram_Protocol
 		}
 		
 		String application_layer;

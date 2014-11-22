@@ -145,7 +145,9 @@ public class Host extends Node
 		}
 		
 		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
-		transport_layer.setLength(app.get_length());
+		System.out.println("AQUI Ó app.get_length() = " + app.get_length());
+		System.out.println("AQUI Ó transport_layer.getLength() = " + transport_layer.getLength());
+		transport_layer.setLength(app.get_length() + transport_layer.getLength());
 		transport_layer.set_protocol("TCP");
 		
 		app_pack.setTransport(transport_layer);

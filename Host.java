@@ -15,6 +15,7 @@ public class Host extends Node
     private DuplexLink link;           //enlace ao qual está ligado o host
     private LinkedList<Packet> buffer; //buffer (infinito) do host
     private int sliding_window;        //tamanho da janela de envio de pacotes
+    private boolean in_connection;     //indica se uma conexão TCP foi aberta
 
 	//Construtor
 	public Host(String name)
@@ -22,6 +23,7 @@ public class Host extends Node
 		this.name = name;
 		this.buffer = new LinkedList<Packet>();
 		this.sliding_window = 1;
+		this.in_connection = false;
 	}
 
 	
@@ -123,6 +125,11 @@ public class Host extends Node
 	//da camada de aplicação
 	private boolean open_connection(Packet app_pack) throws InterruptedException
 	{
+		//conexão já foi aberta
+		if (this.in_connection)
+			return true;
+		
+		//destino inalcançável
 		Packet packet = build_raw_TCP_packet(app_pack);
 		if (packet == null)
 			return false;
@@ -142,6 +149,7 @@ public class Host extends Node
 			send_packet(packet);
 			sleep(100);
 			timeout--;
+			//sem resposta remota
 			if (timeout == 0)
 				return false;
 		}
@@ -158,6 +166,7 @@ public class Host extends Node
 		
 		//ACK
 		send_packet(packet);
+		this.in_connection = true;
 		return true;
 	}
 	
@@ -249,8 +258,7 @@ public class Host extends Node
 		//mandando apenas um pacote
 		else 
 		{
-			System.out.println("Enviando HTTP de " + this.name);
-			TCP transport = (TCP) app_pack.getTransport();
+			TCP transport = (TCP) packet.getTransport();
 			transport.setACK_number(1);
 			transport.setSequence_number(1);
 			packet.setTransport(transport);
@@ -386,6 +394,7 @@ public class Host extends Node
 				
 				synack_packet.setTransport(synack_transport);
 				System.out.println("3way-handshake com SYN-ACK de " + this.name + " --packet " + synack_packet.getId());
+				this.in_connection = true;
 				send_packet(synack_packet);
 			}
 		}

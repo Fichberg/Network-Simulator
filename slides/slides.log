@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.4.27)  22 NOV 2014 20:41
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.4.27)  22 NOV 2014 20:56
 entering extended mode
  %&-line parsing enabled.
 **slides.tex
@@ -1171,9 +1171,12 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
 
 ] [25
 
-] [26
-
 ]
+<simulator2.png, id=688, 642.4pt x 401.5pt>
+File: simulator2.png Graphic file (type png)
+ <use simulator2.png> [26
+
+ <./simulator2.png (PNG copy)>]
 \tf@nav=\write6
 \openout6 = `slides.nav'.
 
@@ -1185,10 +1188,10 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
 
  (./slides.aux) ) 
 Here is how much of TeX's memory you used:
- 16279 strings out of 495041
- 299266 string characters out of 1181897
+ 16298 strings out of 495041
+ 299467 string characters out of 1181897
  372837 words of memory out of 3000000
- 18992 multiletter control sequences out of 15000+50000
+ 19010 multiletter control sequences out of 15000+50000
  30005 words of font info for 26 fonts, out of 3000000 for 9000
  30 hyphenation exceptions out of 8191
  49i,16n,57p,419b,555s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1197,9 +1200,9 @@ mf/fonts/type1/public/lm/lmss10.pfb></usr/share/texmf/fonts/type1/public/lm/lms
 s12.pfb></usr/share/texmf/fonts/type1/public/lm/lmss8.pfb></usr/share/texmf/fon
 ts/type1/public/lm/lmss9.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmsso10.pfb>
-Output written on slides.pdf (26 pages, 291455 bytes).
+Output written on slides.pdf (26 pages, 295882 bytes).
 PDF statistics:
- 747 PDF objects out of 1000 (max. 8388607)
+ 748 PDF objects out of 1000 (max. 8388607)
  53 named destinations out of 1000 (max. 500000)
- 80 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 85 words of extra memory for PDF output out of 10000 (max. 10000000)
 

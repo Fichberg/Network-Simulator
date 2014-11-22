@@ -79,7 +79,7 @@ public class SimulatorLogger
 		{
 			TCP tcp = (TCP) packet.getTransport();
 			int ack = tcp.isACK() ? 1 : 0; 
-			int syn = tcp.isSIN() ? 1 : 0; 
+			int syn = tcp.isSYN() ? 1 : 0; 
 			int fin = tcp.isFIN() ? 1 : 0;
 			int seq_num = tcp.getSequence_number();
 			int rec_num = tcp.getACK_number();

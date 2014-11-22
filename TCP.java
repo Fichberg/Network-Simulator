@@ -9,16 +9,23 @@ public class TCP extends TransportLayer {
 	private int sequence_number;
 	private int ACK_number;
 	private boolean ACK;
-	private boolean SIN;
+	private boolean SYN;
 	private boolean FIN;
 	
-	//Construtor
+	//Construtores
 	public TCP(int source, int destination) 
 	{
 		this.source_port = source;
 		this.destination_port = destination;
 		this.ACK = true;
-		this.SIN = false;
+		this.SYN = false;
+		this.FIN = false;
+		this.protocol = "TCP";
+	}
+	public TCP()
+	{
+		this.ACK = true;
+		this.SYN = false;
 		this.FIN = false;
 		this.protocol = "TCP";
 	}
@@ -66,17 +73,32 @@ public class TCP extends TransportLayer {
 	public void setACK(boolean aCK) {
 		ACK = aCK;
 	}
-	public boolean isSIN() {
-		return SIN;
+	public boolean isSYN() {
+		return SYN;
 	}
-	public void setSIN(boolean sIN) {
-		SIN = sIN;
+	public void setSYN(boolean sYN) {
+		SYN = sYN;
 	}
 	public boolean isFIN() {
 		return FIN;
 	}
 	public void setFIN(boolean fIN) {
 		FIN = fIN;
+	}
+	
+	//clona um objeto TCP com as características deste
+	public void clone_to(TransportLayer tl)
+	{
+		TCP tcp = (TCP) tl;
+		tcp.set_protocol(this.protocol);
+		tcp.setSource_port(this.source_port);
+		tcp.setDestination_port(this.destination_port);
+		tcp.setLength(this.length);
+		tcp.setSequence_number(this.sequence_number);
+		tcp.setACK_number(this.ACK_number);
+		tcp.setACK(this.ACK);
+		tcp.setSYN(this.SYN);
+		tcp.setFIN(this.FIN);
 	}
 	
 

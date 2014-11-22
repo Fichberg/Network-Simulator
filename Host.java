@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,8 @@ public class Host extends Node
     private LinkedList<Packet> buffer; //buffer (infinito) do host
     private int sliding_window;        //tamanho da janela de envio de pacotes
     private boolean in_connection;     //indica se uma conexão TCP foi aberta
+    private String assembled;          //guarda dados que estão sendo montados
+    private int data_offset;
 
 	//Construtor
 	public Host(String name)
@@ -24,6 +27,8 @@ public class Host extends Node
 		this.buffer = new LinkedList<Packet>();
 		this.sliding_window = 1;
 		this.in_connection = false;
+		this.assembled = "";
+		this.data_offset = 1;
 	}
 
 	
@@ -101,12 +106,14 @@ public class Host extends Node
 	{
 		this.buffer.add(packet);
 		reply_if_isSYN(packet); //responde handshake
-		//if (this.buffer.size() == this.sliding_window)
-		//{
+
 		synchronized (this) 
 		{
 			notify(); //avisa que um pacote chegou
 			System.out.println("Host " + name + " recebeu o pacote: " + packet.getId());
+			
+			//remonta pacote a partir de data_offset
+			assembly_packet(packet);
 			
 			if (packet.getApplication() != null)
 			{
@@ -114,7 +121,6 @@ public class Host extends Node
 				this.agent.notify_agent(packet); //envia pacote pra aplicação
 			}
 		}
-		//}
 	}
 	
 	
@@ -138,9 +144,8 @@ public class Host extends Node
 		transport.setSequence_number(0);
 		transport.setACK_number(0);
 		transport.setACK(false);
-		transport.setSIN(true);
+		transport.setSYN(true);
 		packet.setTransport(transport);
-		System.out.println("3way-handshake com SYN de " + this.name + " --packet " + packet.getId());
 
 		//SYN
 		int timeout = 10;
@@ -154,18 +159,18 @@ public class Host extends Node
 				return false;
 		}
 		//SYN-ACK
-		while (!got_ACK(1));
+		while (!got_ACK(0));
 		
 		packet.set_new_Id();
 		transport.setSequence_number(1);
 		transport.setACK_number(1);
 		transport.setACK(true);
-		transport.setSIN(false);
+		transport.setSYN(false);
 		packet.setTransport(transport);
-		System.out.println("3way-handshake com ACK de " + this.name + " --packet " + packet.getId());
 		
 		//ACK
 		send_packet(packet);
+		this.buffer.clear();
 		this.in_connection = true;
 		return true;
 	}
@@ -210,7 +215,8 @@ public class Host extends Node
 		
 		packet.setApplication(app_pack.getApplication());
 		packet.setTransport(transport_layer);
-		packet.setLength(transport_layer.getLength()); //+ tamanho do PACKET
+		packet.set_data(app_pack.get_data());
+		packet.setLength(transport_layer.getLength() + app_pack.get_data().length()); //+ tamanho do PACKET	
 		
 		return packet;
 	}
@@ -220,7 +226,14 @@ public class Host extends Node
 	{
 		String data = packet.get_data();
 		char[] data_in_chars = data.toCharArray();
-		String chopped_data = String.copyValueOf(data_in_chars, offset-1, 1460);
+		int tam_copiado = 0;
+		if (data.length() - (offset + 1460) >= 0)
+			tam_copiado = 1460;
+		else
+			tam_copiado = data.length() - offset + 1;
+		
+		System.out.println("TAM DA STRING: " + packet.get_data().length() + " TAM COPIADO: " + tam_copiado + " OFFSET: " + offset);
+		String chopped_data = String.copyValueOf(data_in_chars, offset-1, tam_copiado);
 		packet.set_data(chopped_data);
 		return offset + 1460;
 	}
@@ -235,36 +248,48 @@ public class Host extends Node
 		if (packet == null)
 			return;
 		
+		int ACK = (int)Math.round(Math.random()*1000) + 2; //numero entre 2 e 1001
+		
 		//mandando pacotes fragmentados
 		if (packet.getLength() > 1460)
 		{
-			int total = packet.getLength() / 1460 + 1;
-			int SEQ = 1;
-			int ACK = 1;
+			int total = packet.get_data().length() / 1460 + 1;
+			int SEQ = 1;	
 			Packet[] packets = new Packet[total];
 			
 			for (int i = 0; i < total; i++)
 			{
-				Packet p = new Packet();
+				Packet p = new Packet("TCP");
 				packet.clone_to_packet(p);
-				TCP transport = (TCP) p.getTransport();
-				transport.setACK_number(ACK++);
+				p.setApplication(null);
+				TCP transport = new TCP();
+				p.getTransport().clone_to(transport);
+				transport.setACK_number(ACK);
 				transport.setSequence_number(SEQ);
+				if (i == total-1) 
+				{
+					transport.setFIN(true);
+					p.setApplication(app_pack.getApplication());
+				}
+				p.setTransport(transport);
+				p.set_data(packet.get_data());
 				SEQ = chop_data(p, SEQ);
+				packets[i] = p;
 			}
 			send_with_congestion_control(packets);
-			
 		}
+		
 		//mandando apenas um pacote
 		else 
 		{
 			TCP transport = (TCP) packet.getTransport();
-			transport.setACK_number(1);
+			
+			transport.setACK_number(ACK);
 			transport.setSequence_number(1);
 			packet.setTransport(transport);
-			System.out.println("Host " + this.name + " vai enviar " + packet.getId());			
+			System.out.println("Host " + this.name + " vai enviar HTML pelo " + packet.getId() + " com ACK " + ACK);	
 			
-			while(!got_ACK(1))
+			do
 			{
 				send_packet(packet);
 				synchronized (this) 
@@ -272,12 +297,13 @@ public class Host extends Node
 					wait(200); //timeout
 				}
 			}
+			while(!got_ACK(ACK));
 			System.out.println("Host " + this.name + " -> ACK para o pacote " + packet.getId());
 		}
 			
 	}
 	
-	//verifica se algum pacote da fila tem o ACK esperado
+	//verifica se algum pacote da fila tem o ACK esperado = seqNumber
 	private boolean got_ACK(int ACK)
 	{
 		Iterator<Packet> itr = this.buffer.iterator();
@@ -285,7 +311,7 @@ public class Host extends Node
 		{
 			Packet packet = itr.next();
 			TCP transport = (TCP) packet.getTransport();
-			if (transport.getACK_number() == ACK)
+			if (transport.getSequence_number() == ACK)
 			{
 				this.buffer.remove(packet);
 				return true;
@@ -297,7 +323,7 @@ public class Host extends Node
 	//política de controle de congestionamento
 	private void send_with_congestion_control(Packet[] packets) throws InterruptedException
 	{
-		
+		System.out.println("Iniciando envio de pacotes fragmentados no congestion_control");
 		boolean recebeu = false;
 		ArrayList<Integer> acks = new ArrayList<Integer>();
 		
@@ -308,16 +334,20 @@ public class Host extends Node
 			{	
 				TCP transport = (TCP) packets[curr_packet].getTransport();
 				acks.add(transport.getACK_number());
+				System.out.println("ENVIANDO --> " + packets[curr_packet].getId() + " com SEQ " + 
+									transport.getSequence_number() + " com FIN " + transport.isFIN());
 				send_packet(packets[curr_packet++]);
+				if (curr_packet == packets.length)
+					break;
 			}
+			curr_packet--;
 			
 			//verifica se a janela enviada chegou ao destino
 			Iterator<Integer> ack_itr = acks.iterator();
 			synchronized (this) 
 			{
 				wait(100); //timeout
-			}
-			
+			}	
 			recebeu = true;
 			while(ack_itr.hasNext())
 			{
@@ -326,15 +356,15 @@ public class Host extends Node
 				{
 					recebeu = false;
 					curr_packet -= this.sliding_window;
-					acks.clear();
 				}
 			}
 		
 			//dobra o envio de pacotes em caso de sucesso
-			if (recebeu)
+			if (recebeu) 
 				this.sliding_window *= 2;
 			else
 				this.sliding_window = 1;
+			acks.clear();
 		}
 	}
 	
@@ -348,8 +378,7 @@ public class Host extends Node
 			TCP transport = (TCP) tl;
 			if (transport.isACK())
 			{
-				System.out.println("HOST " + this.name + " recebeu com ACK " + packet.getId());
-				this.buffer.remove(packet);
+				// this.buffer.remove(packet);
 				
 				Packet ack_packet = new Packet("TCP");
 				ack_packet.setIP_source(this.computer_ip);
@@ -357,12 +386,23 @@ public class Host extends Node
 				
 				TCP ack_transport = new TCP(transport.getDestination_port(), 
 						transport.getSource_port());
-				ack_transport.setACK(false);
-				ack_transport.setACK_number(transport.getACK_number());
-				ack_transport.setSequence_number(transport.getSequence_number());
+				System.out.println("HOST " + this.name + " recebeu " + packet.getId() + " com ACK " + transport.getACK_number());
+				
+				//determina o offset numa transferência de arquivos
+				int next_offset = transport.getACK_number();
+				if (next_offset > 1)
+				{
+					next_offset = transport.getSequence_number() + 1460;
+					this.data_offset = next_offset;
+				}
+				ack_transport.setSequence_number(transport.getACK_number());
+				ack_transport.setACK_number(next_offset);
+				if (transport.isFIN())
+					ack_transport.setFIN(true);
 				
 				ack_packet.setTransport(ack_transport);
-				System.out.println("HOST " +this.name + " enviando ACK reply "+ ack_packet.getId());
+				System.out.println("HOST " +this.name + " enviando ACK reply "+ ack_transport.getACK_number() 
+						          + " com SEQ " + ack_transport.getSequence_number());
 				send_packet(ack_packet);
 			}
 		}
@@ -377,9 +417,8 @@ public class Host extends Node
 		if (tl instanceof TCP)
 		{
 			TCP transport = (TCP) tl;
-			if (transport.isSIN() && !transport.isACK())
+			if (transport.isSYN() && !transport.isACK())
 			{
-				System.out.println("HOST " + this.name + " recebeu com SYN " + packet.getId());
 				this.buffer.remove(packet);
 				
 				Packet synack_packet = new Packet("TCP");
@@ -388,16 +427,48 @@ public class Host extends Node
 				
 				TCP synack_transport = new TCP(transport.getDestination_port(), 
 						transport.getSource_port());
-				synack_transport.setSIN(true);
+				synack_transport.setSYN(true);
 				synack_transport.setACK_number(1);
 				synack_transport.setSequence_number(0);
 				
 				synack_packet.setTransport(synack_transport);
-				System.out.println("3way-handshake com SYN-ACK de " + this.name + " --packet " + synack_packet.getId());
 				this.in_connection = true;
 				send_packet(synack_packet);
 			}
 		}
+	}
+	
+	//monta um pacote que veio fragmentado
+	private void assembly_packet(Packet packet)
+	{
+		if (packet.getTransport() instanceof TCP)
+		{
+			TCP transport = (TCP) packet.getTransport();
+			
+			//detectando pacote fragmentado
+			if (transport.isACK() && (transport.getACK_number() > 1))
+			{
+				//verifica se o pacote recebido veio na ordem correta
+				int offset = transport.getSequence_number();
+				System.out.println("HoSTtt " + this.name + "  offset recebido: " + offset + "   data_offset: " + data_offset);
+				if (offset != this.data_offset)
+					return;
+				
+				reply_if_isACK(packet);
+				this.assembled += packet.get_data();
+				
+				if (transport.isFIN())
+				{
+					packet.set_data(this.assembled);
+					packet.setLength(this.assembled.length());
+					this.assembled = "";
+					this.data_offset = 1;
+					this.agent.notify_agent(packet);
+				}
+					
+			}
+		}
+		
 	}
 	
 	//==============================================

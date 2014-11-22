@@ -40,6 +40,13 @@ public class UDP extends TransportLayer{
 	public void setLength(int length) {
 		this.length = length;
 	}
+
+
+	public void clone_to(TransportLayer tl) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

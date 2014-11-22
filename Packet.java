@@ -18,11 +18,13 @@ public class Packet {
 	public Packet() {
 		this.id = UUID.randomUUID();
 		this.TTL = 64;
+		this.data = "";
 	}
 	public Packet(String protocol)
 	{
 		this.id = UUID.randomUUID();
 		this.TTL = 64;
+		this.data = "";
 		if (protocol.equalsIgnoreCase("TCP"))
 			this.protocol = 6;
 		else if (protocol.equalsIgnoreCase("UDP"))

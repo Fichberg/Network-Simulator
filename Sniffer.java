@@ -1,5 +1,3 @@
-import java.io.*;
-import java.util.logging.*;
 
 public class Sniffer extends Agent {
 

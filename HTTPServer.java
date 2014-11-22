@@ -90,7 +90,7 @@ public class HTTPServer extends Agent {
 		{
 			String filename = m.group(1);
 			if (filename.matches("\\s*") || filename == null)
-				filename = "index.html";
+				filename = "file.txt";
 			System.out.println("é pra abrir o arquivo " + filename);
 			return read_file(filename);
 		}

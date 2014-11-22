@@ -189,8 +189,114 @@
 		\item \textcolor{covered}{Estrutura do NetSim}
 		\item \textcolor{covered}{Entradas}
 		\item \textcolor{covered}{Saídas}
-		\item As classes e as suas funções
+		\item As classes e as seus papeis
 	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{O simulador: como funciona?}
+	\framesubtitle{As classes e as suas funções}
+	\begin{itemize}
+		\item Agent: classe abstrata que representa um agente da rede
+		\item ApplicationLayer: classe que representa uma camada de aplicação
+		\item Clock: classe responsável pelo tempo de execução
+		\item DNSServer: classe que representa um servidor DNS
+		\item DuplexLink: classe que representa um enlace do tipo \textit{duplex-link}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{O simulador: como funciona?}
+	\framesubtitle{As classes e as suas funções}
+	\begin{itemize}
+		\item FTPClient: classe que representa um cliente FTP
+		\item FTPServer: classe que representa um servidor FTP
+		\item Host: classe que representa um \textit{host} da rede
+		\item HTTPClient: classe que representa um cliente HTTP
+		\item HTTPServer: classe que representa um servidor HTTP
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{O simulador: como funciona?}
+	\framesubtitle{As classes e as suas funções}
+	\begin{itemize}
+		\item InputReader: classe responsavel por manipular os arquivos de entrada do simulador
+		\item NetSim: classe que representa o simulador de redes
+		\item Node: classe que representa um nó. Um nó pode ser tanto um \textit{host} quanto um \textit{router}
+		\item Packet: classe que representa um pacote
+		\item Router: classe que representa um \textit{router} da rede 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{O simulador: como funciona?}
+	\framesubtitle{As classes e as suas funções}
+	\begin{itemize}
+		\item RouterBuffer: classe que representa um buffer do \textit{router}. Funciona em FIFO
+		\item SimulatorLogger: classe responsável por escrever os arquivos de saída
+		\item Sniffer: classe que representa um \textit{sniffer}
+		\item TCP: classe que armazena os dados do TCP na camada de transporte
+		\item TransportLayer: classe abstrata que representa uma camada de transporte
+		\item UDP: classe que armazena os dados do UDP na camada de transporte
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{O simulador: como funciona?}
+	\begin{itemize}
+		\item \textcolor{covered}{Estrutura do NetSim}
+		\item \textcolor{covered}{Entradas}
+		\item \textcolor{covered}{Saídas}
+		\item \textcolor{covered}{As classes e as seus papeis}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Conteúdo}
+	\begin{itemize}
+		\item \textcolor{covered}{O simulador: como funciona?}
+		\item Testes realizados com o simulador
+		\item Dificuldades encontradas
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Conteúdo}
+	\begin{itemize}
+		\item \textcolor{covered}{O simulador: como funciona?}
+		\item \textcolor{covered}{Testes realizados com o simulador}
+		\item Dificuldades encontradas
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Dificuldades encontradas}
+	\begin{itemize}
+		\item Planejamento: encontrar a estrutura ideal que comporte os seis protocolos requisitados
+		\item Concorrência: encontrar a forma ideal para lidar com todos os pacotes circulando pela rede simultaneamente
+		\item Integração entre todas as classes do programa
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Conteúdo}
+	\begin{itemize}
+		\item \textcolor{covered}{O simulador: como funciona?}
+		\item \textcolor{covered}{Testes realizados com o simulador}
+		\item \textcolor{covered}{Dificuldades encontradas}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Conteúdo}
+	\begin{center}
+	Obrigado! :)
+	\end{center}
 \end{frame}
 
 \end{document}

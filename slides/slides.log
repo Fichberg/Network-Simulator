@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.4.27)  22 NOV 2014 19:58
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.4.27)  22 NOV 2014 20:41
 entering extended mode
  %&-line parsing enabled.
 **slides.tex
@@ -1148,6 +1148,31 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
 
 ] [14
 
+] [15
+
+]
+[16
+
+] [17
+
+] [18
+
+] [19
+
+] [20
+
+] [21
+
+] [22
+
+] [23
+
+] [24
+
+] [25
+
+] [26
+
 ]
 \tf@nav=\write6
 \openout6 = `slides.nav'.
@@ -1158,24 +1183,23 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10.95> not available
 \tf@snm=\write8
 \openout8 = `slides.snm'.
 
-
-(./slides.aux) ) 
+ (./slides.aux) ) 
 Here is how much of TeX's memory you used:
- 16245 strings out of 495041
- 298958 string characters out of 1181897
+ 16279 strings out of 495041
+ 299266 string characters out of 1181897
  372837 words of memory out of 3000000
- 18982 multiletter control sequences out of 15000+50000
+ 18992 multiletter control sequences out of 15000+50000
  30005 words of font info for 26 fonts, out of 3000000 for 9000
  30 hyphenation exceptions out of 8191
  49i,16n,57p,419b,555s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texm
-f/fonts/type1/public/lm/lmss10.pfb></usr/share/texmf/fonts/type1/public/lm/lmss
-12.pfb></usr/share/texmf/fonts/type1/public/lm/lmss8.pfb></usr/share/texmf/font
-s/type1/public/lm/lmss9.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pf
-b></usr/share/texmf/fonts/type1/public/lm/lmsso10.pfb>
-Output written on slides.pdf (14 pages, 220011 bytes).
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/tex
+mf/fonts/type1/public/lm/lmss10.pfb></usr/share/texmf/fonts/type1/public/lm/lms
+s12.pfb></usr/share/texmf/fonts/type1/public/lm/lmss8.pfb></usr/share/texmf/fon
+ts/type1/public/lm/lmss9.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.p
+fb></usr/share/texmf/fonts/type1/public/lm/lmsso10.pfb>
+Output written on slides.pdf (26 pages, 291455 bytes).
 PDF statistics:
- 427 PDF objects out of 1000 (max. 8388607)
- 29 named destinations out of 1000 (max. 500000)
+ 747 PDF objects out of 1000 (max. 8388607)
+ 53 named destinations out of 1000 (max. 500000)
  80 words of extra memory for PDF output out of 10000 (max. 10000000)
 

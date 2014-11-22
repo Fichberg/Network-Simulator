@@ -91,6 +91,11 @@ public class Packet {
 		this.data = data;
 	}
 
+	public void decrease_ttl()
+	{
+		this.TTL -= 1;
+	}
+
 	//copia os dados do pacote atual em outro passado como parâmetro
 	public void clone_to_packet(Packet packet)
 	{

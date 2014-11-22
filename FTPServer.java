@@ -94,7 +94,7 @@ public class FTPServer extends Agent {
 		}
 		else if(m1.find())
 		{
-			String username = "Anonymous";
+			String username = "USER Anonymous";
 			System.out.println("é para saudar o usuario " + username);
 			return username;
 		}

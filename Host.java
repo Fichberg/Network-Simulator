@@ -87,16 +87,16 @@ public class Host extends Node
 	public void receive_packet(DuplexLink link, Packet packet)
 	{
 		this.buffer.add(packet);
-		reply_if_isACK(packet);
-		if (this.buffer.size() == this.sliding_window)
-		{
+		//if (this.buffer.size() == this.sliding_window)
+		//{
+			reply_if_isACK(packet);
 			synchronized (this) 
 			{
 				System.out.println("Host " + name + " recebeu o pacote: " + packet.getId());
 				this.agent.notify_agent(packet);
 				notify(); //avisa que um pacote chegou
 			}
-		}
+		//}
 	}
 	
 	
@@ -200,7 +200,7 @@ public class Host extends Node
 		while (itr.hasNext())
 		{
 			Packet packet = itr.next();
-			TCP transport = (TCP) packet.getTransport();//itr.next().getTransport();
+			TCP transport = (TCP) packet.getTransport();
 			if (transport.getACK_number() == ACK)
 			{
 				this.buffer.remove(packet);
@@ -257,11 +257,14 @@ public class Host extends Node
 	private void reply_if_isACK(Packet packet)
 	{
 		TransportLayer tl = packet.getTransport();
+			
 		if (tl instanceof TCP)
 		{
 			TCP transport = (TCP) tl;
 			if (transport.isACK())
 			{
+				this.buffer.remove(packet);
+				
 				Packet ack_packet = new Packet();
 				ack_packet.setIP_source(this.computer_ip);
 				ack_packet.setIP_destination(packet.getIP_source());

@@ -5,5 +5,7 @@ public abstract class TransportLayer
 	int source_port;
 	int destination_port;
 	int length;
+	
+	public abstract String get_protocol();
 
 }

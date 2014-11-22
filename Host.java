@@ -123,9 +123,9 @@ public class Host extends Node
 		
 		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
 		transport_layer.setLength(app.get_length());
+		transport_layer.set_protocol("TCP");
 		
 		app_pack.setTransport(transport_layer);
-		app_pack.getTransport().protocol = "TCP";
 		app_pack.setLength(transport_layer.getLength()); //+ tamanho do PACKET!
 		app_pack.setProtocol(6); //número do TCP
 		app_pack.setTTL(64);
@@ -270,7 +270,7 @@ public class Host extends Node
 				
 				TCP ack_transport = new TCP(transport.getDestination_port(), 
 						transport.getSource_port());
-				ack_transport.setProtocol("TCP");
+				ack_transport.set_protocol("TCP");
 				ack_transport.setACK(false);
 				ack_transport.setACK_number(transport.getACK_number());
 				ack_transport.setSequence_number(transport.getSequence_number());
@@ -342,14 +342,13 @@ public class Host extends Node
 		String length  = String.valueOf(transport_layer.getSource_port());
 		       length += String.valueOf(transport_layer.getDestination_port());
 		transport_layer.setLength(app.get_length() + length.length());
-		transport_layer.setProtocol("UDP");
+		transport_layer.set_protocol("UDP");
 		
 		app_pack.setLength(transport_layer.getLength());
 		app_pack.setIP_source(this.computer_ip);
 		app_pack.setIP_destination(destination);
 		app_pack.setProtocol(17);
 		app_pack.setTransport(transport_layer);
-		app_pack.getTransport().protocol = "UDP";
 
 		return app_pack;
 	}

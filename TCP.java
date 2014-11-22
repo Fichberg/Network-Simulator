@@ -23,10 +23,10 @@ public class TCP extends TransportLayer {
 	}
 	
 	//getters e setters
-	public String getProtocol() {
+	public String get_protocol() {
 		return protocol;
 	}
-	public void setProtocol(String protocol) {
+	public void set_protocol(String protocol) {
 		this.protocol = protocol;
 	}
 	public int getSource_port() {

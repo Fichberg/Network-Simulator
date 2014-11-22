@@ -33,8 +33,7 @@ public class FTPServer extends Agent {
 
 	public void receive_command(String command) 
 	{
-		// TODO Auto-generated method stub
-		
+		//Método da classe abstrata: não utilizado
 	}
 	
 	//alerta recebimento de pacote

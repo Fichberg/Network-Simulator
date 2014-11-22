@@ -1,0 +1,14 @@
+
+=======================================
+Cenário simples: (exemplo do enunciado)
+- 4 hosts
+- 2 routers
+- 2 sniffers
+- 2 clientes HTTP
+- 1 servidor DNS
+- 1 servidor HTTP
+
+amostras (em segs):
+-------------------
+4.926
+

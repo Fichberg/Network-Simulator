@@ -81,6 +81,9 @@ public class HTTPServer extends Agent {
 		}
 	}
 	
+	//======================================
+	//HTTP PROCESSING
+	
 	//interpreta uma requisição HTTP e responde de acordo
 	private String process_HTTP_request(String text)
 	{
@@ -90,8 +93,7 @@ public class HTTPServer extends Agent {
 		{
 			String filename = m.group(1);
 			if (filename.matches("\\s*") || filename == null)
-				filename = "file.txt";
-			System.out.println("é pra abrir o arquivo " + filename);
+				filename = "index.html";
 			return read_file(filename);
 		}
 		else

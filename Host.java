@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,7 +109,6 @@ public class Host extends Node
 		synchronized (this) 
 		{
 			notify(); //avisa que um pacote chegou
-			System.out.println("Host " + name + " recebeu o pacote: " + packet.getId());
 			
 			//remonta pacote a partir de data_offset
 			assembly_packet(packet);
@@ -232,7 +230,6 @@ public class Host extends Node
 		else
 			tam_copiado = data.length() - offset + 1;
 		
-		System.out.println("TAM DA STRING: " + packet.get_data().length() + " TAM COPIADO: " + tam_copiado + " OFFSET: " + offset);
 		String chopped_data = String.copyValueOf(data_in_chars, offset-1, tam_copiado);
 		packet.set_data(chopped_data);
 		return offset + 1460;
@@ -287,7 +284,6 @@ public class Host extends Node
 			transport.setACK_number(ACK);
 			transport.setSequence_number(1);
 			packet.setTransport(transport);
-			System.out.println("Host " + this.name + " vai enviar HTML pelo " + packet.getId() + " com ACK " + ACK);	
 			
 			do
 			{
@@ -298,7 +294,6 @@ public class Host extends Node
 				}
 			}
 			while(!got_ACK(ACK));
-			System.out.println("Host " + this.name + " -> ACK para o pacote " + packet.getId());
 		}
 			
 	}
@@ -306,7 +301,9 @@ public class Host extends Node
 	//verifica se algum pacote da fila tem o ACK esperado = seqNumber
 	private boolean got_ACK(int ACK)
 	{
-		Iterator<Packet> itr = this.buffer.iterator();
+		@SuppressWarnings("unchecked")
+		LinkedList<Packet> buf = (LinkedList<Packet>) this.buffer.clone();
+		Iterator<Packet> itr = buf.iterator();
 		while (itr.hasNext())
 		{
 			Packet packet = itr.next();
@@ -323,7 +320,6 @@ public class Host extends Node
 	//política de controle de congestionamento
 	private void send_with_congestion_control(Packet[] packets) throws InterruptedException
 	{
-		System.out.println("Iniciando envio de pacotes fragmentados no congestion_control");
 		boolean recebeu = false;
 		ArrayList<Integer> acks = new ArrayList<Integer>();
 		
@@ -334,8 +330,6 @@ public class Host extends Node
 			{	
 				TCP transport = (TCP) packets[curr_packet].getTransport();
 				acks.add(transport.getACK_number());
-				System.out.println("ENVIANDO --> " + packets[curr_packet].getId() + " com SEQ " + 
-									transport.getSequence_number() + " com FIN " + transport.isFIN());
 				send_packet(packets[curr_packet++]);
 				if (curr_packet == packets.length)
 					break;
@@ -386,7 +380,6 @@ public class Host extends Node
 				
 				TCP ack_transport = new TCP(transport.getDestination_port(), 
 						transport.getSource_port());
-				System.out.println("HOST " + this.name + " recebeu " + packet.getId() + " com ACK " + transport.getACK_number());
 				
 				//determina o offset numa transferência de arquivos
 				int next_offset = transport.getACK_number();
@@ -401,8 +394,6 @@ public class Host extends Node
 					ack_transport.setFIN(true);
 				
 				ack_packet.setTransport(ack_transport);
-				System.out.println("HOST " +this.name + " enviando ACK reply "+ ack_transport.getACK_number() 
-						          + " com SEQ " + ack_transport.getSequence_number());
 				send_packet(ack_packet);
 			}
 		}
@@ -450,7 +441,6 @@ public class Host extends Node
 			{
 				//verifica se o pacote recebido veio na ordem correta
 				int offset = transport.getSequence_number();
-				System.out.println("HoSTtt " + this.name + "  offset recebido: " + offset + "   data_offset: " + data_offset);
 				if (offset != this.data_offset)
 					return;
 				
@@ -488,13 +478,13 @@ public class Host extends Node
 		send_packet(packet);
 		synchronized (this) 
 		{
-			int timeout = 5;
+			int timeout = 10;
 			while (timeout != 0)
 			{
 				String response = DNS_resolve();
 				if (response != null)
 					return response;
-				wait(600);
+				wait(300);
 				timeout--;
 			}
 		}
@@ -505,17 +495,22 @@ public class Host extends Node
 	//extrai o endereço devolvido por um servidor DNS
 	private String DNS_resolve()
 	{
-		Iterator<Packet> itr = this.buffer.iterator();
+		@SuppressWarnings("unchecked")
+		LinkedList<Packet> buf = (LinkedList<Packet>) this.buffer.clone();
+		Iterator<Packet> itr = buf.iterator();
 		Pattern p = Pattern.compile("addr (\\d+\\.\\d+\\.\\d+\\.\\d+)");
 
 		//procura uma requisição DNS na lista de pacotes recebidos
 		while (itr.hasNext())
 		{
 			Packet packet = itr.next();
-			Matcher m = p.matcher(packet.getApplication().get_text());
-			this.buffer.remove(packet);
-			if (m.find())
-				return m.group(1);
+			if (packet.getApplication() != null)
+			{
+				Matcher m = p.matcher(packet.getApplication().get_text());
+				this.buffer.remove(packet);
+				if (m.find())
+					return m.group(1);
+			}
 		}
 
 		//endereço não encontrado

@@ -81,11 +81,11 @@ public class NetSim
 		try 
 		{
 			System.out.print("Initializing simulation in 3...");
-			Thread.sleep(500);
+			Thread.sleep(250);
 			System.out.print("\rInitializing simulation in 3...2...");
-			Thread.sleep(500);
+			Thread.sleep(250);
 			System.out.println("\rInitializing simulation in 3...2...1...");
-			Thread.sleep(500);		
+			Thread.sleep(250);		
 		}
 		catch(Exception e)
 		{

@@ -64,7 +64,7 @@ public class FTPClient extends Agent {
 	public Packet process_command(String command)
 	{
 		String[] split = command.split(" ");
-		String text = split[0] + "\r\n"
+		String text = split[0] + " FTP \r\n"
 		                       + "host: " + split[1] + " \r\n";
 		return build_packet(text, split[1]);
 	}

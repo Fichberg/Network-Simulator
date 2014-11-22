@@ -27,27 +27,10 @@ public class Router extends Node
 	//======================================
 	//MAIN PROGRAM
 	@Override
-	public void run() {
-	
+	public void run() 
+	{
 		//atualiza a tabela de roteamento
 		update_routing();
-		
-		while (true)
-		{
-			try 
-			{   //tempo de latência do roteador para processar pacote
-				sleep((long) this.performance);//this.performance);
-			} catch (InterruptedException e) 
-			{
-				e.printStackTrace();
-				break;
-			}
-			Packet packet = process_package();
-			if (packet == null)
-				continue;
-			int port = route_from_packet(packet);
-			send_packet(packet, port);
-		}
 	}
 	
 	
@@ -176,7 +159,6 @@ public class Router extends Node
 	public void receive_packet(DuplexLink link, Packet packet)
 	{
 		int enlace = this.links.get(link);
-		System.out.println("Router " + this.name + " recebeu " + packet.getId() + " na porta " + enlace);
 		RouterBuffer buffer = this.buffers.get(enlace);
 		
 		//dropando pacote: buffer lotado
@@ -186,12 +168,14 @@ public class Router extends Node
 		}
 	
 		buffer.put_packet(packet);
+		
+		//processa pacotes no buffer
+		process_buffer();
 	}
 	
 	//roteia o pacote de uma interface para outra	
 	public void send_packet(Packet packet, int destination_port) 
 	{
-		//System.out.println("Pacote: " + packet.getId() + " passando por: " + this.name);
 		DuplexLink link = this.get_link(destination_port);
 		link.forward_packet(this, packet);
 	}
@@ -217,6 +201,31 @@ public class Router extends Node
 		RouterBuffer buffer = this.buffers.get(this.current_port);
 		this.current_port++;
 		return buffer.pull_packet();	
+	}
+	
+	//processa todos os pacotes contidos nos buffers
+	private void process_buffer()
+	{
+		for (int i = 0; i < this.interfaces; i++)
+		{
+			RouterBuffer buf = this.buffers.get(i);
+			while (!buf.is_empty())
+			{
+				try 
+				{   //tempo de latência do roteador para processar pacote
+					sleep((long) this.performance);//this.performance);
+				} catch (InterruptedException e) 
+				{
+					e.printStackTrace();
+					break;
+				}
+				Packet packet = process_package();
+				if (packet == null)
+					continue;
+				int port = route_from_packet(packet);
+				send_packet(packet, port);
+			}
+		}
 	}
 
 

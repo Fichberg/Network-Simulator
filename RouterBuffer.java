@@ -47,6 +47,14 @@ public class RouterBuffer
 		return false;
 	}
 	
+	//verifica se o buffer está vazio
+	public boolean is_empty()
+	{
+		if (this.buffer.isEmpty())
+			return true;
+		return false;
+	}
+	
 	//exibe todos os pacotes que estão na fila
 	public void show_packets()
 	{

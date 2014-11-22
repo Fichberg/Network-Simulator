@@ -30,7 +30,19 @@ public class Host extends Node
 	@Override
 	public void run() {
 		
-			
+		while(true) 
+		{
+			synchronized (this) {
+				try 
+				{
+					wait();
+				} 
+				catch (InterruptedException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	
@@ -80,12 +92,6 @@ public class Host extends Node
 	private void send_packet(Packet packet)
 	{
 		System.out.println("Host " + name + " enviando pacote " + packet.getId());
-		try {
-			sleep(200);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		this.link.forward_packet(this, packet);
 	}	
 	
@@ -95,13 +101,19 @@ public class Host extends Node
 		this.buffer.add(packet);
 		//if (this.buffer.size() == this.sliding_window)
 		//{
-			reply_if_isACK(packet);
-			synchronized (this) 
-			{
-				System.out.println("Host " + name + " recebeu o pacote: " + packet.getId());
-				this.agent.notify_agent(packet);
-				notify(); //avisa que um pacote chegou
-			}
+		reply_if_isACK(packet);
+		
+		synchronized (this) 
+		{
+			notify(); //avisa que um pacote chegou
+			System.out.println("Host " + name + " recebeu o pacote: " + packet.getId());
+			
+			//armazena pacotes sem camada de aplicação silenciosamente no buffer
+			if (packet.getApplication() == null)
+				return;
+			this.agent.notify_agent(packet);
+			
+		}
 		//}
 	}
 	
@@ -190,15 +202,14 @@ public class Host extends Node
 			transport.setACK_number(1);
 			transport.setSequence_number(1);
 			packet.setTransport(transport);
-			System.out.println("Host " + this.name + " vai enviar " + packet.getId());
-			
+			System.out.println("Host " + this.name + " vai enviar " + packet.getId());			
 			
 			while(!got_ACK(1))
 			{
 				send_packet(packet);
 				synchronized (this) 
 				{
-					wait(1600); //timeout
+					wait(200); //timeout
 				}
 			}
 			System.out.println("Host " + this.name + " -> ACK para o pacote " + packet.getId());

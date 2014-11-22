@@ -59,7 +59,7 @@ public class HTTPClient extends Agent {
 	//alerta recebimento de pacote
 	public void notify_agent(Packet packet)
 	{
-		//System.out.println("recebi a resposta com o arquivo: " + packet.get_data());
+		System.out.println("recebi a resposta com o arquivo: " + packet.get_data());
 	}
 	
 	//cria um pacote com dados da camada de aplicação

@@ -11,6 +11,7 @@ public class UDP extends TransportLayer{
 	{
 		this.source_port = source;
 		this.destination_port = destination;
+		this.protocol = "UDP";
 	}
 	
 	

@@ -20,6 +20,7 @@ public class TCP extends TransportLayer {
 		this.ACK = true;
 		this.SIN = false;
 		this.FIN = false;
+		this.protocol = "TCP";
 	}
 	
 	//getters e setters

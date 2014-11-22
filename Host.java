@@ -91,7 +91,6 @@ public class Host extends Node
 	//envia pacote pelo enlace do host
 	private void send_packet(Packet packet)
 	{
-		System.out.println("Host " + name + " enviando pacote " + packet.getId());
 		this.link.forward_packet(this, packet);
 	}	
 	
@@ -99,20 +98,19 @@ public class Host extends Node
 	public void receive_packet(DuplexLink link, Packet packet)
 	{
 		this.buffer.add(packet);
+		reply_if_isSYN(packet); //responde handshake
 		//if (this.buffer.size() == this.sliding_window)
 		//{
-		reply_if_isACK(packet);
-		
 		synchronized (this) 
 		{
 			notify(); //avisa que um pacote chegou
 			System.out.println("Host " + name + " recebeu o pacote: " + packet.getId());
 			
-			//armazena pacotes sem camada de aplicação silenciosamente no buffer
-			if (packet.getApplication() == null)
-				return;
-			this.agent.notify_agent(packet);
-			
+			if (packet.getApplication() != null)
+			{
+				reply_if_isACK(packet); //acusa o recebimento
+				this.agent.notify_agent(packet); //envia pacote pra aplicação
+			}
 		}
 		//}
 	}
@@ -121,22 +119,60 @@ public class Host extends Node
 	//==============================================
 	//TCP
 	
-	//inicia uma conexão TCP (faz o 3-way-handshake)
-	//precisa abrir o arquivo esquemas/3wayhandshake.pcap no wireshark e dar uma estudada
-	public void open_connection()
+	//inicia uma conexão TCP (faz o 3-way-handshake) a partir de uma requisição
+	//da camada de aplicação
+	private boolean open_connection(Packet app_pack) throws InterruptedException
 	{
+		Packet packet = build_raw_TCP_packet(app_pack);
+		if (packet == null)
+			return false;
 		
+		TCP transport = (TCP) packet.getTransport();
+		transport.setSequence_number(0);
+		transport.setACK_number(0);
+		transport.setACK(false);
+		transport.setSIN(true);
+		packet.setTransport(transport);
+		System.out.println("3way-handshake com SYN de " + this.name + " --packet " + packet.getId());
+
+		//SYN
+		int timeout = 10;
+		do
+		{
+			send_packet(packet);
+			sleep(100);
+			timeout--;
+			if (timeout == 0)
+				return false;
+		}
+		//SYN-ACK
+		while (!got_ACK(1));
+		
+		packet.set_new_Id();
+		transport.setSequence_number(1);
+		transport.setACK_number(1);
+		transport.setACK(true);
+		transport.setSIN(false);
+		packet.setTransport(transport);
+		System.out.println("3way-handshake com ACK de " + this.name + " --packet " + packet.getId());
+		
+		//ACK
+		send_packet(packet);
+		return true;
 	}
 	
-	//constrói pacote TCP a partir da camada de aplicação
-	private Packet build_TCP_packet(Packet app_pack) throws InterruptedException 
+	//constrói pacote TCP sem a camada de aplicação
+	private Packet build_raw_TCP_packet(Packet app_pack) throws InterruptedException
 	{
 		ApplicationLayer app = app_pack.getApplication();
 		String destination_host = app.get_dest_name();
 		
 		//resolve o nome do destino
 		if (!destination_host.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))
+		{
 			destination_host = DNS_lookup(destination_host);
+			app.set_dest_name(destination_host);
+		}
 
 		if (destination_host == null)
 		{
@@ -145,17 +181,29 @@ public class Host extends Node
 		}
 		
 		TCP transport_layer = new TCP(app.get_source_port(), app.get_dest_port());
+		Packet packet = new Packet("TCP");
+		packet.setTransport(transport_layer);
+		packet.setIP_source(this.computer_ip);
+		packet.setIP_destination(destination_host);
+		
+		return packet;
+	}
+	
+	
+	//constrói pacote TCP a partir da camada de aplicação
+	private Packet build_TCP_packet(Packet app_pack) throws InterruptedException 
+	{
+		Packet packet = build_raw_TCP_packet(app_pack);	
+		ApplicationLayer app = app_pack.getApplication();
+		
+		TCP transport_layer = (TCP) packet.getTransport();
 		transport_layer.setLength(app.get_length());
-		transport_layer.set_protocol("TCP");
 		
-		app_pack.setTransport(transport_layer);
-		app_pack.setLength(transport_layer.getLength()); //+ tamanho do PACKET!
-		app_pack.setProtocol(6); //número do TCP
-		app_pack.setTTL(64);
-		app_pack.setIP_source(this.computer_ip);
-		app_pack.setIP_destination(destination_host);
+		packet.setApplication(app_pack.getApplication());
+		packet.setTransport(transport_layer);
+		packet.setLength(transport_layer.getLength()); //+ tamanho do PACKET
 		
-		return app_pack;
+		return packet;
 	}
 	
 	//fragmenta pacotes de acordo com o MSS = 1460
@@ -171,6 +219,9 @@ public class Host extends Node
 	//envia um pacote TCP de acordo com a política de controle de congestionamento
 	public void send_TCP_packet(Packet app_pack) throws InterruptedException
 	{
+		if (!open_connection(app_pack))
+			return;
+		
 		Packet packet = build_TCP_packet(app_pack);
 		if (packet == null)
 			return;
@@ -198,6 +249,7 @@ public class Host extends Node
 		//mandando apenas um pacote
 		else 
 		{
+			System.out.println("Enviando HTTP de " + this.name);
 			TCP transport = (TCP) app_pack.getTransport();
 			transport.setACK_number(1);
 			transport.setSequence_number(1);
@@ -281,33 +333,62 @@ public class Host extends Node
 	//se um pacote TCP tiver bit ACK ligado, responde host acusando recebimento
 	private void reply_if_isACK(Packet packet)
 	{
+		
 		TransportLayer tl = packet.getTransport();
-			
 		if (tl instanceof TCP)
 		{
 			TCP transport = (TCP) tl;
 			if (transport.isACK())
 			{
+				System.out.println("HOST " + this.name + " recebeu com ACK " + packet.getId());
 				this.buffer.remove(packet);
 				
-				Packet ack_packet = new Packet();
+				Packet ack_packet = new Packet("TCP");
 				ack_packet.setIP_source(this.computer_ip);
 				ack_packet.setIP_destination(packet.getIP_source());
-				ack_packet.setProtocol(6);
-				ack_packet.setTTL(64);
 				
 				TCP ack_transport = new TCP(transport.getDestination_port(), 
 						transport.getSource_port());
-				ack_transport.set_protocol("TCP");
 				ack_transport.setACK(false);
 				ack_transport.setACK_number(transport.getACK_number());
 				ack_transport.setSequence_number(transport.getSequence_number());
 				
 				ack_packet.setTransport(ack_transport);
+				System.out.println("HOST " +this.name + " enviando ACK reply "+ ack_packet.getId());
 				send_packet(ack_packet);
 			}
 		}
 		
+	}
+	
+	//se um pacote estiver com o bit SYN ligado, responde o host para fazer handshake
+	private void reply_if_isSYN(Packet packet)
+	{
+		
+		TransportLayer tl = packet.getTransport();
+		if (tl instanceof TCP)
+		{
+			TCP transport = (TCP) tl;
+			if (transport.isSIN() && !transport.isACK())
+			{
+				System.out.println("HOST " + this.name + " recebeu com SYN " + packet.getId());
+				this.buffer.remove(packet);
+				
+				Packet synack_packet = new Packet("TCP");
+				synack_packet.setIP_source(this.computer_ip);
+				synack_packet.setIP_destination(packet.getIP_source());
+				
+				TCP synack_transport = new TCP(transport.getDestination_port(), 
+						transport.getSource_port());
+				synack_transport.setSIN(true);
+				synack_transport.setACK_number(1);
+				synack_transport.setSequence_number(0);
+				
+				synack_packet.setTransport(synack_transport);
+				System.out.println("3way-handshake com SYN-ACK de " + this.name + " --packet " + synack_packet.getId());
+				send_packet(synack_packet);
+			}
+		}
 	}
 	
 	//==============================================
@@ -320,7 +401,7 @@ public class Host extends Node
 		String text = hostname + ": type A, class IN";
 		String dest = this.dns_server_ip;
 		ApplicationLayer app = new ApplicationLayer(protocol, text, "", dest, 53, 34628);
-		Packet packet = new Packet();
+		Packet packet = new Packet("UDP");
 		packet.setApplication(app);
 		packet = build_UDP_packet(packet);
 		
@@ -370,12 +451,10 @@ public class Host extends Node
 		String length  = String.valueOf(transport_layer.getSource_port());
 		       length += String.valueOf(transport_layer.getDestination_port());
 		transport_layer.setLength(app.get_length() + length.length());
-		transport_layer.set_protocol("UDP");
 		
 		app_pack.setLength(transport_layer.getLength());
 		app_pack.setIP_source(this.computer_ip);
 		app_pack.setIP_destination(destination);
-		app_pack.setProtocol(17);
 		app_pack.setTransport(transport_layer);
 
 		return app_pack;

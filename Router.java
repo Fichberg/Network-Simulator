@@ -231,11 +231,4 @@ public class Router extends Node
 			}
 		}
 	}
-
-
-
-	
-	
-
-
 }

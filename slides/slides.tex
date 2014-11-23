@@ -13,7 +13,7 @@
 \usetheme{Warsaw}
 \title[NetSim: um simulador de redes simplificado.]{NetSim: um simulador de redes simplificado.}
 \author{Carlos Eduardo Leão Elmadjian \and Renan Fichberg}
-\date{25 de Novembro de 2014}
+\date{23 de Novembro de 2014}
 \institute{Instituto de Matemática e Estatística da Universidade de São Paulo (IME-USP)}
 
 \expandafter\def\expandafter\insertshorttitle\expandafter{%
@@ -54,11 +54,8 @@
 \begin{frame}
 	\frametitle{O simulador: como funciona?}
 	\framesubtitle{Estrutura do NetSim}
-	O NetSim é dividido em módulos. Isso foi pensado desta maneira pois, logo de inicio, 
-	foi imaginado que haveriam muitas classes. Como o programa foi desenvolvido em Java, ao compilá-lo, 
-	há um boom na quantidade de arquivos com o surgimento dos de extensão .class. 
-	Com isto, para diminuir o caos no diretório que contém o código-fonte, há outros
-	dois sub-diretórios:
+	O NetSim é dividido em módulos e possui um número considerável de classes.  
+	Os arquivos Java ficam na pasta principal, mas o programa também faz uso de outros dois subdiretórios:
 	\begin{itemize}
 		\item \textbf{/inputs} - Contém arquivos .txt com entradas para alimentar o simulador. É aqui que o usuário deve deixar suas entradas, \textbf{obrigatoriamente}.
 		\item \textbf{/logs} - Contém arquivos .log com as saídas. As saídas são os pacotes capturados pelos \textit{Sniffers} definidos na entrada que alimentou o programa.
@@ -105,7 +102,7 @@
 		\item Entrada para a configuração dos agentes da camada de aplicação: associação do agente declarado a um \textit{host}
 		\item Entrada para a configuração dos agentes da camada de aplicação: declaração dos \textit{sniffers}
 		\item Entrada para a configuração dos agentes da camada de aplicação: locais da rede onde os \textit{sniffers} agirão.
-		\item Entrada para a Configuração das comunicações entre os agentes.
+		\item Entrada para a configuração das comunicações entre os agentes.
 	\end{itemize}
 \end{frame}
 
@@ -122,9 +119,8 @@
 \begin{frame}
 	\frametitle{O simulador: como funciona?}
 	\framesubtitle{Saídas}
-	As saídas, como já mencionado anteriormente, são os resultados das capturas dos pacotes pelo \textit{sniffers}, e estas
-	ficam armazenadas por default no sub-diretório de logs. Cada \textit{sniffer} tem seu próprio log, cujo o nome do arquivo tem o formato
-	\textbf{nome\_do\_sniffer.log}. Este é o comportamento do programa para caso o usuário não passe uma saída da sua escolha. 
+	As saídas são os resultados das capturas dos pacotes pelo \textit{sniffers}, e ficam armazenadas por padrão no subdiretório de logs. Cada \textit{sniffer} tem seu próprio log, cujo o nome do arquivo tem o formato
+	\textbf{nome\_do\_sniffer.log}. Este comportamento pode ser alterado caso o usuário passe uma saída da sua escolha. 
 \end{frame}
 
 \begin{frame}
@@ -180,7 +176,7 @@
 		\end{itemize}
 	\end{itemize}
 	Ainda, além das informações estarem presentes no log, a cada captura os resultados daquele \textit{sniffer}
-	são imprimidos no \textit{prompt} em tempo de execução.
+	são impressos no \textit{prompt} em tempo de execução.
 \end{frame}
 
 \begin{frame}

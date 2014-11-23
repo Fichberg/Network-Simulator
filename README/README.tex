@@ -138,7 +138,7 @@ Para o cenário complexo, utilizamos um arquivo de configuração disponível em
 
 Como o enunciado do EP3 exigia que as transferências entre hosts demandassem arquivos de pelo menos 500KB, optamos por definir que todas as transferências seriam de um mesmo arquivo \textbf{(file.txt)}. Isso acarretou uma lentidão, talvez inesperada, mas justificável visto os mecanismos de \textit{timeouts}, controle de congestionamento e fragmentação de pacotes.
 
-Os experimentos revelaram que o uso da CPU é praticamente constante dentro do patamar de uso de cada cenário. Observou-se, contudo, um ligeiro incremento da variância no tempo de relógio conforme o grau de complexidade dos cenários ia progredindo.
+Os experimentos revelaram que o uso da CPU é praticamente constante dentro do patamar de uso de cada cenário. Observou-se, contudo, um ligeiro incremento da variância no tempo de relógio conforme o grau de complexidade dos cenários ia progredindo. O uso de CPU também se mostrou mais intenso no cenário intermediário e menos intenso no cenário complexo. A explicação para isso está no fato de que a estrutura de rede construída para o caso médio foi menos distribuída e com vários disparos próximos, enquanto que no caso complexo ocorre o oposto.
 
 Em todos os casos, foi utilizado para fins de medição o programa de console GNU Time. Trata-se de um aplicativo mais sofisticado do que o comando \textit{time} do Bash, já que aquele é capaz de medir não só o tempo de execução de um programa como também seu consumo de processamento (em porcentagem).
 

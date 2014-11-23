@@ -138,9 +138,9 @@ Para o cenário complexo, utilizamos um arquivo de configuração disponível em
 
 Como o enunciado do EP3 exigia que as transferências entre hosts demandassem arquivos de pelo menos 500KB, optamos por definir que todas as transferências seriam de um mesmo arquivo \textbf{(file.txt)}. Isso acarretou uma lentidão, talvez inesperada, mas justificável visto os mecanismos de \textit{timeouts}, controle de congestionamento e fragmentação de pacotes.
 
-Os experimentos revelaram que o uso da CPU é praticamente constante dentro do patamar de cada 
+Os experimentos revelaram que o uso da CPU é praticamente constante dentro do patamar de uso de cada cenário. Observou-se, contudo, um ligeiro incremento da variância no tempo de relógio conforme o grau de complexidade dos cenários ia progredindo.
 
-Em todos os casos, foi utilizado para fins de medição o programa de console GNU Time. Trata-se de um aplicativo mais sofisticado do que o comando \textit{time} do Bash, já que aquele é capaz de medir não só o tempo de execução de um programa como também seu consumo de processamento em porcentagem.
+Em todos os casos, foi utilizado para fins de medição o programa de console GNU Time. Trata-se de um aplicativo mais sofisticado do que o comando \textit{time} do Bash, já que aquele é capaz de medir não só o tempo de execução de um programa como também seu consumo de processamento (em porcentagem).
 
 
 \section{Guia de implementação}
@@ -150,13 +150,13 @@ Nesta seção, iremos discutir brevemente a implementação do código por meio 
 \subsection{Agent.java}
 
 \begin{itemize}
-	\item É uma classe abstrata que representa um agente da rede. Os agentes da rede são os presentes em \textbf{AgentEnum.java}. Ela tem as assinaturas dos métodos usados por um agente.
+	\item É uma classe abstrata que representa um agente da rede. Os agentes da rede são os presentes em \textbf{AgentEnum.java}. Ela possui as assinaturas dos métodos usados por um agente.
 \end{itemize}
 
 \subsection{Clock.java}
 
-Apesar de no final nem todas as funções de clock terem sido usadas, elas foram implementadas para caso houvesse a necessidade de ter mais ou menos precisão. Já a última, que também acabou não sendo usada, 
-foi idealizada para, se caso tivesse uma simulação muito longa, mostrar o tempo em um formato mais legível para humanos.
+Apesar de no final nem todos os métodos de Clock serem usados, eles foram implementados para caso houvesse a necessidade de ter mais ou menos precisão na contabilidade. O último método abaixo, que também não é usado, 
+foi idealizado para caso tivesse uma simulação muito longa, mostrasse o tempo em um formato mais legível para humanos.
 \begin{itemize}
 	\item \textbf{execution\_time\_in\_nanos()} - Retorna o tempo de execução em nanossegundos.
 	\item \textbf{execution\_time\_in\_milis()} - Retorna o tempo de execução em milissegundos.
@@ -172,6 +172,7 @@ foi idealizada para, se caso tivesse uma simulação muito longa, mostrar o temp
 \end{itemize}
 
 \subsection{DuplexLink.java}
+Esta classe representa um \textit{duplex-link} da rede, isto é, um canal de comunicação de duas vias independentes em sentidos contrários.
 
 \begin{itemize}
 	\item \textbf{set\_link(String, String)} - Conecta-se aos extremos do enlace.
@@ -200,6 +201,7 @@ foi idealizada para, se caso tivesse uma simulação muito longa, mostrar o temp
 \end{itemize}
 
 \subsection{Host.java}
+Esta é uma das principais classes do simulador. O Host abriga métodos responsáveis pela manipulação de todo tipo de informação atrelada à camada de transporte. Além disso, todo Host faz a intermediação entre o enlace e o agente de aplicação que está instalado na máquina.
 
 \begin{itemize}
 	\item \textbf{run()} - Executa uma instância do tipo \textit{Host}.

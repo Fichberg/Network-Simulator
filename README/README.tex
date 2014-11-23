@@ -1,0 +1,326 @@
+\documentclass[11pt]{article}
+
+%% Escrevendo em português
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+%\usepackage[latin1]{inputenc}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[a4paper,margin={1in}]{geometry}
+\usepackage{graphicx}
+\textbf{\usepackage{color}}
+\definecolor{warning}{rgb}{0.8, 0, 0}
+
+%% Pulando linhas
+\renewcommand{\baselinestretch}{1.5}
+
+\newcommand{\vsp}{\vspace{0.2in}}
+
+\begin {document}
+
+
+\centerline{
+  \begin{minipage}[t]{5in}
+    \begin{center}
+    {\Large \bf LEIAME - EP3}
+    \vsp \\
+	{\small {\bf Disciplina:} Programação para Redes - MAC 448/5910 / IME-USP}\\
+	{\small {\bf Professor:} Daniel Macêdo Batista}
+    \end{center}
+  \end{minipage}
+}
+\vsp
+
+
+\section{Integrantes}
+
+\begin{tabular}{ll}
+\textbf {Nome} &  \textbf {NUSP} \\
+Carlos Eduardo Leão Elmadjian & 5685741 \\
+Renan Fichberg & 7991131
+\end{tabular}
+
+\vsp
+
+%============================================================
+
+\section{Arquivos}
+
+O diretório \textbf{ep3-carlos-renan} deve conter os seguintes arquivos:
+\subsection{Arquivos relativos ao simulador}
+\begin{enumerate}
+
+\item \textbf{AgentEnum.java} -- Enum com os tipos de agentes da rede.
+\item \textbf{Agent.java} -- classe abstrata que representa um agente da rede.
+\item \textbf{Clock.java} -- classe responsável pelo tempo de execução. 
+\item \textbf{DNSServer.java} -- classe que representa um servidor DNS.
+\item \textbf{DuplexLink.java} -- classe que representa um enlace da rede do tipo \textit{duplex-link.}
+\item \textbf{FTPClient.java} -- classe que representa um cliente FTP.
+\item \textbf{FTPServer.java} -- classe que representa um servidor FTP.
+\item \textbf{Host.java} -- classe que representa um computador da rede.
+\item \textbf{HTTPClient.java} -- classe que representa um cliente HTTP.
+\item \textbf{HTTPServer.java} -- classe que representa um servidor HTTP.
+\item \textbf{InputReader.java} -- classe responsável por manipular os arquivos de
+entrada do simulador e interpretá-los.
+\item \textbf{Makefile} -- instruções de compilação para o \textit{make}.
+\item \textbf{NetSim.java} -- classe que contém o código-fonte do simulador.
+\item \textbf{Node.java} -- classe que representa um nó. Um nó pode ser tanto
+um computador (\textit{host}) quanto um roteador (\textit{router}).
+\item \textbf{Packet.java} -- classe que representa um pacote.
+\item \textbf{Router.java} -- classe que representa um roteador da rede.
+\item \textbf{RouterBuffer.java} -- classe que representa um buffer do router. Funciona em FIFO.
+\item \textbf{SimulatorLogger.java} -- classe responsável por escrever os arquivos de saída (e criar diretórios com o caminho desejado caso necessário).
+\item \textbf{Sniffer.java} -- classe que representa um \textit{sniffer}.
+\item \textbf{TCP.java} -- classe que armazena os dados do TCP na camada de transporte.
+\item \textbf{TransportLayer.java} -- classe abstrata que representa uma camada de transporte.
+\item \textbf{UDP.java} -- classe que armazena os dados do UDP na camada de transporte.
+\item \textbf{README.pdf} -- documentação complementar, relatório de implementação e guia geral do programa (este documento).
+\end{enumerate}
+
+\subsection{Arquivos relativos à apresentação}
+\begin{enumerate}
+	\item \textbf{slides.pdf} -- slides de apresentação do trabalho.
+	\item \textbf{testes.txt} -- arquivo contendo as amostras individuais dos testes pedidos, com cálculo da média, desvio padrão e intervalo de confiança em 95\%.
+	\item \textbf{graficos.tar.gz} -- arquivo contendo seis gráficos criados a partir dos dados coletados.\\
+\end{enumerate}
+
+\section{Compilação e execução}
+Para compilar, você pode utilizar o programa \textit{make} sem nenhum parâmetro:
+
+\color{cyan}
+\begin{verbatim}
+$make
+\end{verbatim}
+\color{black}
+
+\noindent Para executar o programa do simulador gerado na compilação, você deve passar de parâmetro o nome do arquivo que contém os dados de entrada, como no exemplo abaixo: 
+
+\color{cyan}
+\begin{verbatim}
+$java NetSim input_example.txt
+\end{verbatim}
+\color{black}
+
+\noindent Este arquivo de entrada deve estar \textbf{\textcolor{warning}{obrigatoriamente}} dentro do sub-diretório \textbf{inputs}. 
+
+\section{Relatório do projeto}
+
+Escolhemos implementar esse projeto em Java em função da vasta documentação disponível, uma ampla comunidade de apoio, a oferta de bibliotecas específicas para nossos propósitos, IDEs dedicadas, como o Eclipse, e familiarização. Todos estes fatores facilitaram o desenvolvimento.   
+
+\subsection{Simulador}
+
+A implementação do simulador foi pensada logo de inicio considerando o fato de que o programa deveria saber como lidar com 6 protocolos distintos em 3 camadas da rede diferentes. A estrutura com um módulo específico para guardar as entradas existe pois já era previsto que haveriam muitos arquivos diferentes e optamos por não misturar as entradas com o código-fonte apenas por uma questão de organização.
+
+A estratégia usada para fazer a leitura dos dados do arquivo de entrada foi com o uso de expressões regulares. É criado um vetor com todos os padrões que são esperados pelo simulador e, conforme acontece a leitura de uma nova linha no arquivo de entrada, o programa vê se aquela linha se enquadra em algum dos padrões esperados. É importante ressaltar que delegamos ao usuário a responsabilidade de montar uma entrada adequada. A execução prossegue ininterrupta mesmo que seja lido algo não esperado. O arquivo de entrada deve ter extensão \textbf{.txt}, \textbf{\textcolor{warning}{obrigatoriamente}}.
+
+Quanto às saídas, o simulador está preparado para receber qualquer nome de arquivo, com ou sem diretórios. Se o usuário quiser criar um arquivo dentro de 3 diretórios, o programa irá se virar. Os 3 diretórios serão sub-diretórios do ficheiro que contém o código-fonte. O programa não faz verificação para ver se já existe um arquivo com o nome pedido e muito menos checa se 2 \textit{sniffers} estão escrevendo no mesmo arquivo de saída (log). Mais uma vez, fica ao cargo do usuário não fornecer entradas que se enquadram nestas categorias. Se nenhum rota for passada, isto é, o programa ler no arquivo de entrada, na REGEXP específica, uma string vazia (\"\"), então o log deste sniffer será criado por default em um sub-diretório chamado \textbf{logs}, e o file se chamará \textbf{nome\_do\_sniffer.log}.
+
+Com relação aos cabeçalhos, foi considerado que não há opções, portanto, os valores usados são 20 bytes no cabeçalho IP (considerando que é IPv4), 20 bytes no cabeçalho TCP e 8 bytes no cabeçalho UDP.
+
+\subsection{Experimentos}
+
+
+\section{Guia de implementação}
+
+Nesta seção, iremos discutir brevemente a implementação do código por meio das classes em Java e seus principais métodos. Informações mais detalhadas estão contidas nos comentários presentes no código-fonte.
+
+\subsection{Agent.java}
+
+\begin{itemize}
+	\item É uma classe abstrata que representa um agente da rede. Os agentes da rede são os presentes em \textbf{AgentEnum.java}. Ela tem as assinaturas dos métodos usados por um agente.
+\end{itemize}
+
+\subsection{Clock.java}
+
+Apesar de no final nem todas as funções de clock terem sido usadas, elas foram implementadas para caso houvesse a necessidade de ter mais ou menos precisão. Já a última, que também acabou não sendo usada, 
+foi idealizada para, se caso tivesse uma simulação muito longa, mostrar o tempo em um formato mais legível para humanos.
+\begin{itemize}
+	\item \textbf{execution_time_in_nanos()} - Retorna o tempo de execução em nanosegundos.
+	\item \textbf{execution_time_in_milis()} - Retorna o tempo de execução em milisegundos.
+	\item \textbf{execution_time_in_seconds()} - Retorna o tempo de execução em segundos.
+	\item \textbf{hms_format(long)} - Retorna um string no formato horas/minutos/segundos.
+\end{itemize}
+
+\subsection{DNSServer.java}
+
+\begin{itemize}
+	\item \textbf{notify_agent(Packet)} - Alerta recebimento de pacote.
+	\item \textbf{process_DNS_query(ApplicationLayer, String)} - Processa uma requisição DNS e responde com um pacote que contém o endereço IP.
+\end{itemize}
+
+\subsection{DuplexLink.java}
+
+\begin{itemize}
+	\item \textbf{set_link(String, String)} - Conecta-se aos extremos do enlace.
+	\item \textbf{has_edges(String, String)} - Checa se o link é formado pelos dois nós recebidos (em String).
+	\item \textbf{get_Node(String)} - Retorna o nó associado a um nome específico.
+	\item \textbf{is_host_point(String)} - Verifica se o nó é um \textit{host}.
+	\item \textbf{public boolean is_router_point(String)} - Verifica se o nó é um \textit{router}.
+	\item \textbf{void forward_packet(Node, Packet)} - Passa para frente o pacote de um nó para o próximo.
+\end{itemize}
+
+\subsection{FTPClient.java}
+
+\begin{itemize}
+	\item \textbf{receive_command(String)} - Recebe um comando.
+	\item \textbf{Packet build_packet(String, String)} - Cria um pacote com dados da camada de aplicação.
+	\item \textbf{process_command(String)} - Processa um comando recebido do simulador e o transforma em um pacote.
+\end{itemize}
+
+\subsection{FTPServer.java}
+
+\begin{itemize}
+	\item \textbf{process_packet(Packet)} - Processa um pacote recebido de um \textit{host}.
+	\item \textbf{process_FTP_request(String)} - Interpreta uma requisição FTP e a responde.
+	\item \textbf{read_file(String)} - Lê um arquivo do servidor.
+	\item \textbf{FTP_response(String)} - Cria o cabeçalho FTP de acordo com os dados requisitados.
+\end{itemize}
+
+\subsection{Host.java}
+
+\begin{itemize}
+	\item \textbf{run()} - Executa uma instância do tipo \textit{Host}.
+	\item \textbf{send_packet(Packet)} - Envia pacote pelo enlace do host.
+	\item \textbf{receive_packet(DuplexLink, Packet)} - Recebe pacote pelo enlace do host.
+	\item \textbf{open_connection(Packet)} - Inicia uma conexão TCP (faz o \textit{3-way-handshake}).
+	\item \textbf{build_raw_TCP_packet(Packet)} - Constrói pacote TCP sem a camada de aplicação.
+	\item \textbf{chop_data(Packet, int)} - Fragmenta pacotes de para um MSS de 1460 bytes.
+	\item \textbf{send_TCP_packet(Packet)} - Envia um pacote TCP de acordo com a política de controle de congestionamento.
+	\item \textbf{got_ACK(int)} - Verifica se algum pacote da fila tem o ACK esperado.
+	\item \textbf{send_with_congestion_control(Packet[])} - Política de controle de congestionamento.
+	\item \textbf{reply_if_isACK(Packet)} - Se um pacote TCP tiver bit ACK ligado, responde host acusando recebimento.
+	\item \textbf{reply_if_isSYN(Packet)} - Se um pacote estiver com o bit SYN ligado, responde o host para fazer handshake.
+	\item \textbf{assembly_packet(Packet)} - Monta um pacote que chegou fragmentado.
+	\item \textbf{DNS_lookup(String)} - Faz requisição do endereço IP de um host.
+	\item \textbf{DNS_resolve()} - Extrai o endereço devolvido por um servidor DNS.
+	\item \textbf{build_UDP_packet(Packet)} - Recebe um pacote com a camada de aplicação e insere uma camada UDP.
+	\item \textbf{send_UDP_packet(Packet)} - Envia um pacote UDP.
+\end{itemize}
+
+\subsection{HTTPClient.java}
+
+\begin{itemize}
+	\item \textbf{receive_command(String)} - Recebe um comando.
+	\item \textbf{notify_agent(Packet)} - Alerta recebimento de pacote.
+	\item \textbf{build_packet(String, String)} - Cria um pacote com dados da camada de aplicação.
+	\item \textbf{process_command(String)} - Processa um comando recebido do simulador e transforma-o num pacote.
+\end{itemize}
+
+\subsection{HTTPServer.java}
+
+\begin{itemize}
+	\item \textbf{notify_agent(Packet)} - Alerta recebimento de pacote.
+	\item \textbf{process_packet(Packet)} - Processa um pacote recebido de um \textit{host}.
+	\item \textbf{process_HTTP_request(String)} - Interpreta uma requisição HTTP e a responde.
+	\item \textbf{read_file(String)} - Lê um arquivo do servidor.
+	\item \textbf{HTTP_response(String)} - Cria o cabeçalho HTTP de acordo com os dados requisitados.
+\end{itemize}
+
+\subsection{InputReader.java}
+
+\begin{itemize}
+	\item \textbf{read_input(String)} - Leitor de entrada. Obter os dados para gerar simulação.
+	\item \textbf{parse_line(String)} - Faz o parsing individual de cada linha e encaminha para a função apropriada.
+	\item \textbf{set_host(String) } - Cria uma instância nova de um \textit{host}.
+	\item \textbf{set_router(String, String)} - Cria uma instância nova de um \textit{router}.
+	\item \textbf{set_duplex_link(String, String, String, String)} - Cria uma instância nova de um enlace do tipo \textit{duplex-link}.
+	\item \textbf{configure_host(String, String, String, String)} - Configura um \textit{host} com IP, \textit{default gateway} e DNS.
+	\item \textbf{configure_router(String, String)} - Configura um \textit{router} associando um IP a uma interface do enlace.
+	\item \textbf{configure_router_route(String, String)} - Define as rotas do roteador.
+	\item \textbf{configure_router_specs(String, String, String)} - Define as especificações de desempenho do roteador.
+	\item \textbf{set_agent(String, String)} - Cria instância de um agente da rede (aplicação ou \textit{sniffer}).
+	\item \textbf{attach_app_agent(String, String)} - Associa um agente de aplicação a um \textit{host}.
+	\item \textbf{attach_sniffer_agent(String, String, String, String)} - Associa um agente \textit{sniffer} a um enlace.
+	\item \textbf{set_simulation(String, String)} - Define o programa principal.
+\end{itemize}
+
+\subsection{NetSim.java}
+
+\begin{itemize}
+	\item \textbf{main(String[])} - Função principal.
+	\item \textbf{schedule(InputReader, Timer)} - Agendador de disparos de comandos para os agentes.
+	\item \textbf{schedule_finish(Long, Timer)} - Agenda o fim do programa, com um \textit{timer} e um disparo em segundos.
+	\item \textbf{start_countdown()} - Imprime a contagem regressiva para inicialização do simulador de forma bonitinha. :3
+	\item \textbf{void init_all_nodes(InputReader)} - Roda todos os \textit{hosts} e \textit{routers} da simulação.
+	\item \textbf{boolean check_arguments(String[]) - Checa argumentos de entrada.
+	\item \textbf{invalid_argument_notification()} - Notifica erro com relação aos argumentos da linha de comando e termina execução do programa.
+\end{itemize}
+
+\subsection{Node.java}
+
+\begin{itemize}
+	\item É uma classe abstrata que representa um nó da rede. Ela tem as assinaturas de métodos comuns às entidades que são nós (\textit{hosts} e \textit{routers}).
+\end{itemize}
+
+
+\subsection{Packet.java}
+
+\begin{itemize}
+	\item \textbf{decrease_ttl()} - Diminui o TTL do pacote.
+	\item \textbf{clone_to_packet(Packet)} - Clona um pacote.
+\end{itemize}
+
+\subsection{Router.java}
+
+\begin{itemize}
+	\item \textbf{void run()} - Executa uma instância do tipo \textit{Router}.
+	\item \textbf{get_link(int)} - Retorna o enlace associado à porta.
+	\item \textbf{have_port(int)} - Checa se a porta existe no atributo de portas e IP.
+	\item \textbf{have_ip(String)} - Checa se o IP existe no atributo de portas e strings.
+	\item \textbf{retrieve_associated_ip(int)} - Busca o IP associado à porta.
+	\item \textbf{retrieve_associated_port(String)} - Busca a porta associado ao IP.
+	\item \textbf{update_routing()} - Atualiza a tabela de roteamento para eliminar valores que correspondem a IPs.
+	\item \textbf{receive_packet(DuplexLink, Packet)} - Recebe pacote de um enlace.
+	\item \textbf{send_packet(Packet, int)} - Roteia o pacote de uma interface para outra.
+	\item \textbf{route_from_packet(Packet)} - Define a interface para onde deve ser enviado o pacote.
+	\item \textbf{process_package()} - Processa todos os pacotes contidos nos \textit{buffers}.
+\end{itemize}
+
+\subsection{RouterBuffer.java}
+
+\begin{itemize}
+	\item \textbf{put_packet(Packet)} - Adiciona o pacote à fila.
+	\item \textbf{pull_packet()} - Remove um pacote da fila.
+	\item \textbf{is_full()} - Verifica se o \textit{buffer} está cheio.
+	\item \textbf{is_empty()} - Verifica se o buffer está vazio.
+	\item \textbf{show_packets()} - Exibe todos os pacotes que estão na fila.
+\end{itemize}
+
+\subsection{SimulatorLogger.java}
+
+\begin{itemize}
+	\item \textbf{set_log_file_name(String)} - Cria o log.
+	\item \textbf{split_file_name(String)} - Trabalha o PATH, vendo os sub-diretórios que devem ser criados e o nome do arquivo para escrever a saída.
+	\item \textbf{have_dir(String)} - Checa se precisa criar sub-diretórios de acordo com os dados de entrada.
+	\item \textbf{write_to_log(Clock, Packet)} - Escreve no log do \textit{sniffer}.
+	\item \textbf{build_message(Clock, Packet)} - Constrói a mensagem que deve ser escrita no arquivo de saída e imprimida no \textit{prompt}.
+\end{itemize}
+
+\subsection{Sniffer.java}
+
+\begin{itemize}
+	\item \textbf{set_residence(Object)} - Define onde a aplicação está localizada.
+	\item \textbf{write_capture(Packet)} - Invoca a função de escrita do log para escrever as informações da captura do pacote.,
+\end{itemize}
+
+\subsection{TCP.java}
+
+\begin{itemize}
+	\item \textbf{clone_to(TransportLayer)} - Clona um objeto TCP.
+\end{itemize}
+
+\subsection{TransportLayer.java}
+
+\begin{itemize}
+	\item É uma classe abstrata que representa uma camada de transporte. Ela tem as assinaturas dos métodos usados por uma camada de transporte e alguns atributos comuns.
+\end{itemize}
+
+\subsection{UDP.java}
+
+\begin{itemize}
+	\item Basicamente \textit{setters} e \textit{getters}.
+\end{itemize}
+
+
+\end{document}
+
+

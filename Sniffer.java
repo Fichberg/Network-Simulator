@@ -21,6 +21,7 @@ public class Sniffer extends Agent {
 		this.link = (DuplexLink) obj;
 	}
 
+	//setta o nome do arquivo de saída no log do sniffer
 	public void set_filename(String filename)
 	{
 		this.snifferLog.set_log_file_name(filename);
@@ -43,10 +44,10 @@ public class Sniffer extends Agent {
 
 	}
 	
-	//método que alerta o sniffer sobre a transmissão de um pacote no link
+	//O Sniffer não faz nada com isso. É o preço a pagar por usar classes abstratas
 	public void notify_agent(Packet packet)
 	{
-		//write_capture(clock, packet, print);
+
 	}
 
 	//funcao que escreve o log das capturas deste sniffer. Escreve em que tempo de execucao 

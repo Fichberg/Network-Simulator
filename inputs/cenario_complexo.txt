@@ -1,0 +1,145 @@
+# Criação de 12 computadores
+set h0 [$simulator host]
+set h1 [$simulator host]
+set h2 [$simulator host]
+set h3 [$simulator host]
+set h4 [$simulator host]
+set h5 [$simulator host]
+set h6 [$simulator host]
+set h7 [$simulator host]
+set h8 [$simulator host]
+set h9 [$simulator host]
+set h10 [$simulator host]
+set h11 [$simulator host]
+
+# Criação de 6 roteadores
+set r0 [$simulator router 4]
+set r1 [$simulator router 4]
+set r2 [$simulator router 3]
+set r3 [$simulator router 3]
+set r4 [$simulator router 4]
+set r5 [$simulator router 4]
+
+# Criação dos enlaces ligando os computadores e os roteadores para criar a
+# simulação.
+$simulator duplex-link $h0 $r0.0 2Mbps 10ms
+$simulator duplex-link $h1 $r0.1 2Mbps 10ms
+$simulator duplex-link $h2 $r0.2 2Mbps 10ms
+$simulator duplex-link $r0.3 $r2.0 5Mbps 20ms
+$simulator duplex-link $h3 $r1.0 5Mbps 5ms
+$simulator duplex-link $h4 $r1.1 5Mbps 5ms
+$simulator duplex-link $h5 $r1.2 5Mbps 5ms
+$simulator duplex-link $r1.3 $r2.1 5Mbps 20ms
+$simulator duplex-link $r2.2 $r3.2 10Mbps 50ms
+$simulator duplex-link $h6 $r4.0 1Mbps 5ms
+$simulator duplex-link $h7 $r4.1 1Mbps 5ms
+$simulator duplex-link $h8 $r4.2 1Mbps 5ms
+$simulator duplex-link $r4.3 $r3.0 10Mbps 10ms
+$simulator duplex-link $h9 $r5.0 2Mbps 10ms
+$simulator duplex-link $h10 $r5.1 2Mbps 10ms
+$simulator duplex-link $h11 $r5.2 2Mbps 10ms
+$simulator duplex-link $r5.3 $r3.1 10Mbps 10ms
+
+# Configuração dos hosts: endereço IP do computador, endereço IP do
+# roteador padrão e endereço IP do servidor DNS.
+# Obs.: Considere que todas as redes sempre serão classe C, ou seja,
+# máscara = 255.255.255.0
+$simulator $h0 10.0.0.1 10.0.0.4 10.0.1.3
+$simulator $h1 10.0.0.2 10.0.0.5 10.0.1.3
+$simulator $h2 10.0.0.3 10.0.0.6 10.0.1.3
+$simulator $h3 10.0.1.1 10.0.1.4 10.0.1.3
+$simulator $h4 10.0.1.2 10.0.1.5 10.0.1.3
+$simulator $h5 10.0.1.3 10.0.1.6 1.1.1.1
+$simulator $h6 192.168.0.1 192.168.0.4 192.168.1.3
+$simulator $h7 192.168.0.2 192.168.0.5 192.168.1.3
+$simulator $h8 192.168.0.3 192.168.0.6 192.168.1.3
+$simulator $h9 192.168.1.1 192.168.1.4 192.168.1.3
+$simulator $h10 192.168.1.2 192.168.1.5 192.168.1.3
+$simulator $h11 192.168.1.3 192.168.1.6 1.1.1.1
+
+# Configuração dos roteadores: porta, endereço IP [[porta, endereço # IP] ...]
+$simulator $r0 0 10.0.0.4 1 10.0.0.5 2 10.0.0.6 3 10.0.0.7
+$simulator $r1 0 10.0.1.4 1 10.0.1.5 2 10.0.1.6 3 10.0.1.7
+$simulator $r2 0 10.0.0.8 1 10.0.1.8 2 10.0.2.1
+$simulator $r3 0 192.168.0.8 1 198.168.1.8 2 198.168.2.1
+$simulator $r4 0 192.168.0.4 1 192.168.0.5 2 192.168.0.6 3 192.168.0.7
+$simulator $r5 0 192.168.1.4 1 192.168.1.4 2 192.168.1.6 3 192.168.1.7
+
+# Configuração dos roteadores: rotas (obs.: nos roteadores todas as
+# rotas devem ser explícitadas apontando para outro roteador ou para a
+# porta. Não há roteador padrão no roteador. Não se preocupe com o
+# caso de comunicações com endereçõs inexistentes na rede).
+$simulator $r0 route 10.0.0.1 0 10.0.0.2 1 10.0.0.3 2 10.0.1.0 3 192.168.0.0 3 192.168.1.0 3
+$simulator $r1 route 10.0.1.1 0 10.0.1.2 1 10.0.1.3 2 10.0.0.0 3 192.168.0.0 3 192.168.1.0 3
+$simulator $r2 route 10.0.0.0 0 10.0.1.0 1 192.168.0.0 2 192.168.1.0 2
+$simulator $r3 route 192.168.0.0 0 192.168.1.0 1 10.0.0.0 2 10.0.1.0 2
+$simulator $r4 route 192.168.0.1 0 192.168.0.2 1 192.168.0.3 2 192.168.1.0 3 10.0.0.0 3 10.0.1.0 3
+$simulator $r5 route 192.168.1.1 0 192.168.1.2 1 192.168.1.3 2 192.168.0.0 3 10.0.0.0 3 10.0.1.0 3
+
+# Configuração dos roteadores: tempo para processar 1 pacote, porta,
+# tamanho da fila da porta em quantidade de pacotes, [[porta, tamanho ...] ...]
+$simulator $r0 performance 100us 0 500 1 500 2 500 3 500
+$simulator $r1 performance 100us 0 500 1 500 2 500 3 500
+$simulator $r2 performance 500us 0 1000 1 1000 2 1000
+$simulator $r3 performance 500us 0 1000 1 1000 2 1000
+$simulator $r4 performance 50us 0 500 1 500 2 500 3 500
+$simulator $r5 performance 50us 0 500 1 500 2 500 3 500
+
+# Configuração dos agentes da camada de aplicacção.
+set httpc0 [new Agent/HTTPClient]
+set httpc1 [new Agent/HTTPClient]
+set httpc2 [new Agent/HTTPClient]
+set https3 [new Agent/HTTPServer]
+set https4 [new Agent/HTTPServer]
+set dns5 [new Agent/DNSServer]
+set httpc6 [new Agent/HTTPClient]
+set httpc7 [new Agent/HTTPClient]
+set httpc8 [new Agent/HTTPClient]
+set https9 [new Agent/HTTPServer]
+set https10 [new Agent/HTTPServer]
+set dns11 [new Agent/DNSServer]
+$simulator attach-agent $httpc0 $h0
+$simulator attach-agent $httpc1 $h1
+$simulator attach-agent $httpc2 $h2
+$simulator attach-agent $https3 $h3
+$simulator attach-agent $https4 $h4
+$simulator attach-agent $dns5 $h5
+$simulator attach-agent $httpc6 $h6
+$simulator attach-agent $httpc7 $h7
+$simulator attach-agent $httpc8 $h8
+$simulator attach-agent $https9 $h9
+$simulator attach-agent $https10 $h10
+$simulator attach-agent $dns11 $h11
+
+# Configuração dos sniffers.
+set sniffer0 [new Agent/Sniffer]
+set sniffer1 [new Agent/Sniffer]
+set sniffer2 [new Agent/Sniffer]
+set sniffer3 [new Agent/Sniffer]
+set sniffer4 [new Agent/Sniffer]
+$simulator attach-agent $sniffer0 $r0.3 $r2.0 "sniffer0"
+$simulator attach-agent $sniffer1 $r2.1 $r1.3 "sniffer1"
+$simulator attach-agent $sniffer2 $r2.2 $r3.2 "sniffer2"
+$simulator attach-agent $sniffer3 $r4.3 $r3.0 "sniffer3"
+$simulator attach-agent $sniffer4 $r3.1 $r5.3 "sniffer4"
+
+# Configuração das comunicações entre os agentes.
+$simulator at 1.2 "httpc0 GET h9"
+$simulator at 2.4 "httpc1 GET h10"
+$simulator at 3.3 "httpc2 GET h3"
+$simulator at 4.0 "httpc6 GET h3"
+$simulator at 5.4 "httpc7 GET h4"
+$simulator at 6.2 "httpc8 GET h9"
+$simulator at 1.1 "httpc0 GET h9"
+$simulator at 2.2 "httpc1 GET h10"
+$simulator at 3.3 "httpc2 GET h3"
+$simulator at 4.4 "httpc6 GET h3"
+$simulator at 5.5 "httpc7 GET h4"
+$simulator at 6.6 "httpc8 GET h9"
+$simulator at 1.7 "httpc0 GET h9"
+$simulator at 2.8 "httpc1 GET h10"
+$simulator at 3.0 "httpc2 GET h3"
+$simulator at 4.0 "httpc6 GET h3"
+$simulator at 5.0 "httpc7 GET h4"
+$simulator at 6.0 "httpc8 GET h9"
+$simulator at 7.0 "finish"

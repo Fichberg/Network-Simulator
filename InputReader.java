@@ -49,13 +49,11 @@ public class InputReader
     	}
     	catch (FileNotFoundException e)
     	{
-    		//TODO: acertar a linha dentro do print
-		    //System.err.println("InputReader.java:27: " + e);
+    		e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			//TODO: acertar a linha dentro do print
-		    //System.err.println("InputReader.java:31: " + e);
+			e.printStackTrace();
 		}
 		finally
 		{
@@ -66,8 +64,7 @@ public class InputReader
 		    }
 		    catch (IOException e)
 		    {
-				//TODO: acertar a linha dentro do print
-		    	//System.err.println("InputReader.java:44: " + e);
+				e.printStackTrace();
 		    }
 		}
 	}

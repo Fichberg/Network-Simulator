@@ -67,7 +67,70 @@ Cenário médio: (criado pelo grupo)
 - 8 hosts
 - 4 routers
 - 3 sniffers
+- 3 clientes HTTP
+- 3 servidores HTTP
+- 2 servidores DNS
+- 8 requisições GET de 590k
 
 amostras (segs | % CPU):
 ------------------------
+33.81  |  85
+33.59  |  85
+33.58  |  85
+33.63  |  85
+33.68  |  85
+33.51  |  85
+33.73  |  85
+33.76  |  85
+33.77  |  85
+33.90  |  85
+33.61  |  85
+33.72  |  85
+33.68  |  85
+33.55  |  85
+33.50  |  85
+33.63  |  85
+33.46  |  85
+33.54  |  85
+33.61  |  85
+33.54  |  85
+33.63  |  85
+33.40  |  85
+33.42  |  85
+33.68  |  85
+33.78  |  85
+33.53  |  85
+33.54  |  85
+33.64  |  85
+33.47  |  85
+33.56  |  85
+
+Tempo
+-----
+Média         = 33.615
+Desvio padrão = 0.119849
+t             = 2.045
+n             = 30
+IC (x,95%)    = [33.570252673 ; 33.659747327]
+
+% CPU
+-----
+Média         = 85
+Desvio padrão = 0
+t             = 2.045
+n             = 30
+IC (x,95%)    = [85 ; 85]
+
+
+
+=======================================
+Cenário complexo: (Fonte: https://github.com/dacortez/NetSimulator/blob/master/complexo.ns --
+(o arquivo foi estudado e modificado)
+- 12 hosts
+- 6 routers
+- 4 sniffers
+- 6 clientes HTTP
+- 4 servidores HTTP
+- 2 servidores DNS
+- 16 requisições GET de 590k
 

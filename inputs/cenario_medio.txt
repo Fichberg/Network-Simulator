@@ -3,63 +3,96 @@ set h0 [$simulator host]
 set h1 [$simulator host]
 set h2 [$simulator host]
 set h3 [$simulator host]
-set h3 [$simulator host]
-set h3 [$simulator host]
-set h3 [$simulator host]
+set h4 [$simulator host]
+set h5 [$simulator host]
+set h6 [$simulator host]
+set h7 [$simulator host]
 
 
 #define os roteadores
 set r0 [$simulator router 3]
-set r1 [$simulator router 3]
+set r1 [$simulator router 4]
+set r2 [$simulator router 4]
+set r3 [$simulator router 3]
 
 #define os enlaces
 $simulator duplex-link $h0 $r0.0 10Mbps 10ms
-$simulator duplex-link $h1 $r0.1 5Mbps 2ms
-$simulator duplex-link $r0.2 $r1.0 2Mbps 20ms
-$simulator duplex-link $r1.1 $h2 10Mbps 5ms
-$simulator duplex-link $r1.2 $h3 5Mbps 2ms
+$simulator duplex-link $h4 $r0.1 5Mbps 2ms
+$simulator duplex-link $r1.1 $r0.2 5Mbps 2ms
+$simulator duplex-link $h1 $r1.0 2Mbps 20ms
+$simulator duplex-link $h5 $r1.2 10Mbps 5ms
+$simulator duplex-link $r1.3 $r2.1 5Mbps 2ms
+$simulator duplex-link $h2 $r2.0 10Mbps 10ms
+$simulator duplex-link $h6 $r2.2 5Mbps 2ms
+$simulator duplex-link $r2.3 $r3.1 2Mbps 20ms
+$simulator duplex-link $h3 $r3.0 10Mbps 5ms
+$simulator duplex-link $h7 $r3.2 5Mbps 2ms
 
 #IP do host, default gateway e DNS
-$simulator $h0 10.0.0.1 10.0.0.2 192.168.1.1
-$simulator $h1 10.1.1.1 10.1.1.2 192.168.1.1
-$simulator $h2 192.168.2.2 192.168.2.3 192.168.1.1
-$simulator $h3 192.168.1.1 192.168.1.2 1.1.1.1
+$simulator $h0 10.0.0.1 10.0.0.2 10.3.1.1
+$simulator $h1 10.5.1.1 10.5.1.2 10.3.1.1
+$simulator $h2 192.168.1.1 192.168.1.2 192.168.5.1
+$simulator $h3 192.168.5.1 192.168.5.2 1.1.1.1
+$simulator $h4 10.1.1.1 10.1.1.2 10.3.1.1 
+$simulator $h5 10.3.1.1 10.3.1.2 1.1.1.1
+$simulator $h6 192.168.3.1 192.168.3.2 192.168.5.1
+$simulator $h7 192.168.4.1 192.168.4.2 192.168.5.1
 
 #interface do roteador e IP associado
-$simulator $r0 0 10.0.0.2 1 10.1.1.2 2 192.168.3.3
-$simulator $r1 0 192.168.3.4 1 192.168.2.3 2 192.168.1.2
+$simulator $r0 0 10.0.0.2 1 10.1.1.2 2 10.2.1.1
+$simulator $r1 0 10.5.1.2 1 10.2.1.2 2 10.3.1.2 3 10.4.1.2
+$simulator $r2 0 129.168.1.2 1 10.4.1.3 2 192.168.3.2 3 192.168.2.3
+$simulator $r3 0 192.168.5.2 1 192.168.2.2 2 192.168.4.2
 
 #define rotas: ip de destino -> interface ou outro endereço IP
-$simulator $r0 route 10.0.0.0 0 10.1.1.0 1 192.168.3.0 2 192.168.2.0 192.168.3.4 192.168.1.0 192.168.3.4
-$simulator $r1 route 192.168.3.0 0 192.168.2.0 1 192.168.1.0 2 10.0.0.0 192.168.3.3 10.1.1.0 192.168.3.3
+$simulator $r0 route 10.0.0.0 0 10.1.1.0 1 10.2.1.0 2 10.3.1.0 2 10.4.1.0 2 10.5.1.0 2 192.168.1.0 2 192.168.2.0 2 192.168.3.0 2 192.168.4.0 2 192.168.5.0 2 
+$simulator $r1 route 10.5.1.0 0 10.2.1.0 1 10.3.1.0 2 10.4.1.0 3 10.0.0.0 1 10.1.1.0 1 192.168.1.0 3 192.168.2.0 3 192.168.3.0 3 192.168.4.0 3 192.168.5.0 3 
+$simulator $r2 route 192.168.1.0 0 10.4.1.0 1 192.168.3.0 2 192.168.2.0 3 192.168.4.0 3 192.168.5.0 3 10.3.1.0 1 10.5.1.0 1 10.2.1.0 1 10.1.1.0 1 10.0.0.0 1 
+$simulator $r3 route 192.168.5.0 0 192.168.2.0 1 192.168.4.0 2 192.168.3.0 1 192.168.1.0 1 10.4.1.0 1 10.5.1.0 1 10.3.1.0 1 10.2.1.0 1 10.0.0.0 1 10.1.1.0 1 
 
 #tempo para processar 1 pacote, e tamanho da fila por interface
-$simulator $r0 performance 100us 0 1000 1 1000 2 1000
-$simulator $r1 performance 20us 0 1000 1 1000 2 1000
+$simulator $r0 performance 80us 0 1000 1 1000 2 1000
+$simulator $r1 performance 20us 0 1000 1 1000 2 1000 3 1000
+$simulator $r2 performance 40us 0 1000 1 1000 2 1000 3 1000
+$simulator $r3 performance 50us 0 1000 1 1000 2 1000
 
 #define agentes da camada e aplicação
 set httpc0 [new Agent/HTTPClient]
 set httpc1 [new Agent/HTTPClient]
+set httpc2 [new Agent/HTTPClient]
+set https0 [new Agent/HTTPServer]
+set https1 [new Agent/HTTPServer]
 set https2 [new Agent/HTTPServer]
-set dns3 [new Agent/DNSServer]
+set dns0 [new Agent/DNSServer]
+set dns1 [new Agent/DNSServer]
 
 #associa agente ao host
 $simulator attach-agent $httpc0 $h0
-$simulator attach-agent $httpc1 $h1
-$simulator attach-agent $https2 $h2
-$simulator attach-agent $dns3 $h3
+$simulator attach-agent $httpc1 $h4
+$simulator attach-agent $httpc2 $h7
+$simulator attach-agent $https0 $h1
+$simulator attach-agent $https1 $h2
+$simulator attach-agent $https2 $h6
+$simulator attach-agent $dns0 $h5
+$simulator attach-agent $dns1 $h3
 
 #define sniffers. 
 set sniffer1 [new Agent/Sniffer]
 set sniffer2 [new Agent/Sniffer]
+set sniffer3 [new Agent/Sniffer]
 
 #a leitura dos sniffers deve ser salva nos arquivos temporários
-$simulator attach-agent $sniffer1 $r0.2 $r1.0 "tmp/sniffer1"
-$simulator attach-agent $sniffer2 $h1 $r0.1 ""
+$simulator attach-agent $sniffer1 $r2.2 $h6 "tmp/sniffer1"
+$simulator attach-agent $sniffer2 $r2.1 $r1.3 "tmp/sniffer2"
+$simulator attach-agent $sniffer3 $h3 $r3.0 "tmp/sniffer3"
 
 #programa principal da simulação: tempo (segs) + ação do agente
-$simulator at 0.5 "httpc0 GET h2"
-$simulator at 0.6 "httpc1 GET 192.168.2.2"
-$simulator at 0.61 "httpc1 GET h0"
+$simulator at 0.2 "httpc0 GET h6"
+$simulator at 0.5 "httpc1 GET 10.5.1.1"
+$simulator at 0.6 "httpc2 GET h2"
 $simulator at 0.7 "httpc0 GET h2"
-$simulator at 4.0 "finish"
+$simulator at 1.2 "httpc2 GET h6"
+$simulator at 2.6 "httpc1 GET 192.168.1.1"
+$simulator at 3.4 "httpc1 GET h6"
+$simulator at 4.2 "httpc0 GET h1"
+$simulator at 6.0 "finish"

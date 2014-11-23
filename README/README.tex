@@ -220,7 +220,7 @@ foi idealizada para, se caso tivesse uma simulação muito longa, mostrar o temp
 \begin{itemize}
 	\item \textbf{read_input(String)} - Leitor de entrada. Obter os dados para gerar simulação.
 	\item \textbf{parse_line(String)} - Faz o parsing individual de cada linha e encaminha para a função apropriada.
-	\item \textbf{set_host(String) } - Cria uma instância nova de um \textit{host}.
+	\item \textbf{set_host(String)} - Cria uma instância nova de um \textit{host}.
 	\item \textbf{set_router(String, String)} - Cria uma instância nova de um \textit{router}.
 	\item \textbf{set_duplex_link(String, String, String, String)} - Cria uma instância nova de um enlace do tipo \textit{duplex-link}.
 	\item \textbf{configure_host(String, String, String, String)} - Configura um \textit{host} com IP, \textit{default gateway} e DNS.
@@ -241,7 +241,7 @@ foi idealizada para, se caso tivesse uma simulação muito longa, mostrar o temp
 	\item \textbf{schedule_finish(Long, Timer)} - Agenda o fim do programa, com um \textit{timer} e um disparo em segundos.
 	\item \textbf{start_countdown()} - Imprime a contagem regressiva para inicialização do simulador de forma bonitinha. :3
 	\item \textbf{void init_all_nodes(InputReader)} - Roda todos os \textit{hosts} e \textit{routers} da simulação.
-	\item \textbf{boolean check_arguments(String[]) - Checa argumentos de entrada.
+	\item \textbf{boolean check_arguments(String[])} - Checa argumentos de entrada.
 	\item \textbf{invalid_argument_notification()} - Notifica erro com relação aos argumentos da linha de comando e termina execução do programa.
 \end{itemize}
 

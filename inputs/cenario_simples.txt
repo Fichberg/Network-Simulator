@@ -51,7 +51,7 @@ set sniffer2 [new Agent/Sniffer]
 
 #a leitura dos sniffers deve ser salva nos arquivos temporários
 $simulator attach-agent $sniffer1 $r0.2 $r1.0 "tmp/sniffer1"
-$simulator attach-agent $sniffer2 $h1 $r0.1 "tmp/sniffer2"
+$simulator attach-agent $sniffer2 $h1 $r0.1 ""
 
 #programa principal da simulação: tempo (segs) + ação do agente
 $simulator at 0.5 "httpc0 GET h2"

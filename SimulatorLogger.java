@@ -3,14 +3,58 @@ import java.io.*;
 public class SimulatorLogger
 {
 	String sniffer_name;           //Nome identificador do sniffer
-	String log_file_name;          /*Nome do log file deste sniffer. 
-	                               <PATH do diretorio em que esta o NetSim>/logs/<Nome do sniffer>.log*/
+	String log_file_name;          //Nome do log file deste sniffer.
 
 	//Cria um logger
 	public SimulatorLogger(String sniffer_name)
 	{
 		this.sniffer_name = sniffer_name;
-		this.log_file_name = System.getProperty("user.dir") + "/logs/" + sniffer_name + ".log";
+	}
+
+	//setter e criador do log
+	public void set_log_file_name(String filename)
+	{
+		if(filename.isEmpty())
+		{
+			File single_dir = new File("logs/");
+			single_dir.mkdirs();
+			this.log_file_name = System.getProperty("user.dir") + "/logs/" + this.sniffer_name + ".log";
+		}
+		else
+		{
+			if(have_dir(filename))
+			{
+				String[] split_str = split_file_name(filename);
+				String dirs = split_str[0], file = split_str[1];
+				File dir = new File(dirs);
+				dir.mkdirs();
+			}
+			this.log_file_name = System.getProperty("user.dir") + "/" + filename;
+		}
+	}
+
+	//Divide a string entre o que é diretorio e o que e o file em si
+	private String[] split_file_name(String file_name)
+	{
+		String[] split_str = new String[2];
+		int split_index = -1;
+		for(int i = 0; i < file_name.length(); i++)
+			if(file_name.charAt(i) == '/') split_index = i;
+
+		if(split_index != -1)
+		{
+			split_str[0] = file_name.substring(0, split_index + 1);
+			split_str[1] = file_name.substring(split_index + 1, file_name.length());
+		}
+		return split_str;
+	}
+
+	//Checa se tem diretorio a ser criado
+	private boolean have_dir(String file_name)
+	{
+		for(int i = 0; i < file_name.length(); i++)
+			if(file_name.charAt(i) == '/') return true;
+		return false;
 	}
 
 	//Escreve no log do sniffer. O clock recebido é o clock inicial do simulador
@@ -50,7 +94,6 @@ public class SimulatorLogger
 	//Cria a mensagem a ser escrita no log do Sniffer
 	private String build_message(Clock clock, Packet packet)
 	{
-		//TODO: ACERTAR OS CAMPOS COM ???
 		int protocol_id, upper_layers_size;
 		if(packet.getTransport().get_protocol() == "TCP") 
 			protocol_id = 6;

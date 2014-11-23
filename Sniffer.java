@@ -20,6 +20,11 @@ public class Sniffer extends Agent {
 	{
 		this.link = (DuplexLink) obj;
 	}
+
+	public void set_filename(String filename)
+	{
+		this.snifferLog.set_log_file_name(filename);
+	}
 	
 	//getters
 	public String get_name() 

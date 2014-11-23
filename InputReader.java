@@ -12,6 +12,8 @@ public class InputReader
 	private HashMap<Float, String> commands;     //Dicionário com o programa do simulador
 	private HashMap<String, String> dns_table;   //Tabela de hosts para DNS
 	private ArrayList<DuplexLink> duplex_links;  //Lista de objetos do tipo DuplexLink
+
+
 	private Clock clock;                         //Detém o tempo inicial da execucao. Sera passada para os sniffers
 
 	//Construtor
@@ -112,7 +114,7 @@ public class InputReader
 			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+)$"), 
 			
 			//10: sniffer-link association
-			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+\\.?\\d+) " + "\\$(\\w+\\.?\\d+) \"(.+)\""),
+			Pattern.compile("\\$\\w+ attach-agent \\$(\\w+) \\$(\\w+\\.?\\d+) " + "\\$(\\w+\\.?\\d+) \"(.*)\""),
 			
 			//11: main program
 			Pattern.compile("\\$\\w+ at (\\d+\\.?\\d+) \"(.+)\"") 
@@ -264,7 +266,7 @@ public class InputReader
 	}
 	
 	//10: associa um agente sniffer a um duplex_link
-	private void attach_sniffer_agent(String agent, String point_A, String point_B, String file)
+	private void attach_sniffer_agent(String agent, String point_A, String point_B, String filename)
 	{
 		Iterator<DuplexLink> itr = this.duplex_links.iterator();
 		while (itr.hasNext())
@@ -273,6 +275,7 @@ public class InputReader
 			if (current_link.has_edges(point_A, point_B))
 			{
 				Sniffer sniffer = (Sniffer) this.agents.get(agent);
+				sniffer.set_filename(filename);
 				current_link.set_sniffer(sniffer);
 				break;
 			}

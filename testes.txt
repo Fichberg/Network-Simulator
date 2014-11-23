@@ -3,6 +3,7 @@ Testes realizados utilizando a ferramenta GNU time 1.7
 
 =======================================
 Cenário simples: (exemplo do enunciado)
+Arquivo: cenario_simples.txt
 - 4 hosts
 - 2 routers
 - 2 sniffers
@@ -64,6 +65,7 @@ IC (x,95%)    = [77.18370188 ; 77.54969812]
 
 =======================================
 Cenário médio: (criado pelo grupo)
+Arquivo: cenario_medio.txt
 - 8 hosts
 - 4 routers
 - 3 sniffers
@@ -126,11 +128,62 @@ IC (x,95%)    = [85 ; 85]
 =======================================
 Cenário complexo: (Fonte: https://github.com/dacortez/NetSimulator/blob/master/complexo.ns --
 (o arquivo foi estudado e modificado)
+Arquivo: cenario_complexo.txt
 - 12 hosts
 - 6 routers
 - 4 sniffers
 - 6 clientes HTTP
 - 4 servidores HTTP
 - 2 servidores DNS
-- 16 requisições GET de 590k
+- 18 requisições GET de 590k
+
+
+amostras (segs | % CPU):
+------------------------
+42.46  |  62
+42.62  |  62
+42.54  |  62
+42.91  |  62
+42.47  |  62
+42.55  |  63
+42.79  |  62
+42.83  |  62
+42.51  |  62
+42.74  |  63
+43.68  |  63
+42.60  |  63
+42.73  |  62
+42.73  |  62
+42.61  |  62
+42.82  |  63
+42.86  |  63
+42.96  |  63
+42.66  |  63
+42.82  |  63
+42.82  |  63
+42.90  |  62
+42.85  |  63
+42.93  |  62
+42.56  |  63
+42.96  |  63
+42.83  |  63
+42.88  |  63
+42.91  |  63
+42.85  |  63
+
+Tempo
+-----
+Média         = 42.7793
+Desvio padrão = 0.228925
+t             = 2.045
+n             = 30
+IC (x,95%)    = [42.693827598 ; 42.864772402]
+
+% CPU
+-----
+Média         = 62.5667
+Desvio padrão = 0.504007
+t             = 2.045
+n             = 30
+IC (x,95%)    = [62.378521825 ; 62.754878175]
 

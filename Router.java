@@ -193,8 +193,10 @@ public class Router extends Node
 	private int route_from_packet(Packet packet)
 	{
 		String destination_IP = packet.getIP_destination();
-		destination_IP = destination_IP.replaceAll("(\\d+\\.\\d+\\.\\d+)\\.\\d+", "$1.0");
-		String route = this.routes.get(destination_IP);
+		String destination = destination_IP.replaceAll("(\\d+\\.\\d+\\.\\d+)\\.\\d+", "$1.0");
+		String route = this.routes.get(destination);
+		if (route == null)
+			route = this.routes.get(destination_IP);
 		return Integer.parseInt(route);
 	}
 	

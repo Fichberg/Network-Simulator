@@ -69,12 +69,12 @@ $simulator $r5 0 192.168.1.4 1 192.168.1.4 2 192.168.1.6 3 192.168.1.7
 # rotas devem ser explícitadas apontando para outro roteador ou para a
 # porta. Não há roteador padrão no roteador. Não se preocupe com o
 # caso de comunicações com endereçõs inexistentes na rede).
-$simulator $r0 route 10.0.0.1 0 10.0.0.2 1 10.0.0.3 2 10.0.1.0 3 192.168.0.0 3 192.168.1.0 3
-$simulator $r1 route 10.0.1.1 0 10.0.1.2 1 10.0.1.3 2 10.0.0.0 3 192.168.0.0 3 192.168.1.0 3
-$simulator $r2 route 10.0.0.0 0 10.0.1.0 1 192.168.0.0 2 192.168.1.0 2
-$simulator $r3 route 192.168.0.0 0 192.168.1.0 1 10.0.0.0 2 10.0.1.0 2
-$simulator $r4 route 192.168.0.1 0 192.168.0.2 1 192.168.0.3 2 192.168.1.0 3 10.0.0.0 3 10.0.1.0 3
-$simulator $r5 route 192.168.1.1 0 192.168.1.2 1 192.168.1.3 2 192.168.0.0 3 10.0.0.0 3 10.0.1.0 3
+$simulator $r0 route 10.0.0.1 0 10.0.0.2 1 10.0.0.3 2 10.0.1.0 3 192.168.0.0 3 192.168.1.0 3 
+$simulator $r1 route 10.0.1.1 0 10.0.1.2 1 10.0.1.3 2 10.0.0.0 3 192.168.0.0 3 192.168.1.0 3 
+$simulator $r2 route 10.0.0.0 0 10.0.1.0 1 192.168.0.0 2 192.168.1.0 2 
+$simulator $r3 route 192.168.0.0 0 192.168.1.0 1 10.0.0.0 2 10.0.1.0 2 
+$simulator $r4 route 192.168.0.1 0 192.168.0.2 1 192.168.0.3 2 192.168.1.0 3 10.0.0.0 3 10.0.1.0 3 
+$simulator $r5 route 192.168.1.1 0 192.168.1.2 1 192.168.1.3 2 192.168.0.0 3 10.0.0.0 3 10.0.1.0 3 
 
 # Configuração dos roteadores: tempo para processar 1 pacote, porta,
 # tamanho da fila da porta em quantidade de pacotes, [[porta, tamanho ...] ...]

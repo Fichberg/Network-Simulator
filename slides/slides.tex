@@ -240,6 +240,24 @@
 
 \begin{frame}
 	\frametitle{O simulador: como funciona?}
+	\framesubtitle{Exemplo de saída}
+	\begin{center}
+		\includegraphics[scale=0.35]{printscreen1.png}\\
+		Início do 3-way-handshake pelo cliente 10.0.0.1
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{O simulador: como funciona?}
+	\framesubtitle{Exemplo de saída}
+		\begin{center}
+			\includegraphics[scale=0.35]{printscreen3.png}\\
+			Fim da transmissão, evidenciado pelo bit FIN
+		\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{O simulador: como funciona?}
 	\begin{itemize}
 		\item \textcolor{covered}{Estrutura do NetSim}
 		\item \textcolor{covered}{Entradas}
@@ -321,38 +339,71 @@
 
 \begin{frame}
 	\frametitle{Testes realizados com o simulador}
-	\framesubtitle{Informações das máquinas do experimento}
-	\begin{itemize}
-		\item Máquina real:
-			\begin{itemize}
-				\item Intel i5 2500K 3.3GHz, 8GB de RAM
-				\item Placa de rede Realtek RTL8111/8168/8411 – 1Gbit/s
-				\item HD Seagate 7200RPM 1TB
-				\item Sistema Operacional: Arch Linux x86\_64 (kernel 3.16.3-1)
-			\end{itemize}
-	\end{itemize}
+	\framesubtitle{Cenário complexo - Tempo}
+	\begin{center}
+	\includegraphics[scale=0.18]{chart(4).png}
+	\end{center}
+	\begin{center}
+	Média = 42.7793
+	\end{center}
+	\begin{center}
+	IC = [42.693827598 ; 42.864772402]
+	\end{center}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Testes realizados com o simulador}
-	\framesubtitle{Informações das máquinas do experimento}
-	\begin{itemize}
-		\item Máquina virtual:
-			\begin{itemize}
-				\item 1 processador da máquina hospedeira, 2GB de RAM
-				\item Placa de rede em modo bridge
-				\item Sistema Operacional: Elementary OS x86\_32 (kernel 3.2.0-7)
-			\end{itemize}
-	\end{itemize}
+	\framesubtitle{Cenário complexo - CPU}
+	\begin{center}
+	\includegraphics[scale=0.18]{chart(5).png}
+	\end{center}
+	\begin{center}
+	Média = 62.5667
+	\end{center}
+	\begin{center}
+	IC = [62.378521825 ; 62.754878175]
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Os três cenários de tempo}
+	\begin{center}
+	\includegraphics[scale=0.18]{chart(6).png}
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Os três cenários de CPU}
+	\begin{center}
+	\includegraphics[scale=0.18]{chart(7).png}
+	\end{center}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Testes realizados com o simulador}
 	\framesubtitle{Análise}
 	\begin{itemize}
-		\item 
+		\item Observamos uma variância crescente no \textit{tempo} conforme a complexidade do cenário
+		\item Não é possível inferir nada sobre a variância no tempo de CPU
+		\item O experimento mais complexo possui uma rede distribuída e disparos mais intervalados, o que explica o baixo consumo de CPU em comparação com os demais
 	\end{itemize}
 \end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Informações das máquinas do experimento}
+	\begin{itemize}
+		\item Máquina real:
+			\begin{itemize}
+				\item Intel i5 2500K 3.3GHz, 8GB de RAM
+				\item HD Seagate 7200RPM 1TB
+				\item Sistema Operacional: Arch Linux x86\_64 (kernel 3.17.2-1)
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
 
 \begin{frame}
 	\frametitle{Conteúdo}
@@ -378,7 +429,7 @@
 	Pontos positivos:
 	\begin{itemize}
 		\item Aprendizado: mais conhecimento sobre o funcionamento das camadas e como elas interagem
-		\item Menos problemas para planejar a estrutura do programa graças a bagagem do EP2
+		\item Menos problemas para planejar a estrutura do programa graças à bagagem do EP2
 	\end{itemize}
 \end{frame}
 

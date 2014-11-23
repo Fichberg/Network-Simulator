@@ -83,6 +83,7 @@ entrada do simulador e interpretá-los.
 	\item \textbf{/inputs/cenario\_medio.txt} -- arquivo contendo uma configuração para o simulador um pouco mais densa que a anterior.
 	\item \textbf{/inputs/cenario\_complexo.txt} -- arquivo com a configuração mais complexa para o simulador.
 	\item \textbf{/inputs/ftp\_example.txt} -- configuração de cenário para uso do protocolo FTP.
+	\item \textbf{file.txt} -- arquivo usado nas transferências.
 	\item \textbf{graficos.tar.gz} -- arquivo contendo seis gráficos criados a partir dos dados coletados.\\
 \end{enumerate}
 
@@ -121,6 +122,8 @@ Além disso, ponderamos se deveríamos aceitar entradas com disparos simultâneo
 
 Com relação aos cabeçalhos, foi considerado ainda que não há opções, portanto, os valores usados são 20 bytes no cabeçalho IP (considerando que é IPv4), 20 bytes no cabeçalho TCP e 8 bytes no cabeçalho UDP.
 
+Neste programa, presumimos que todas as transferências UDP possuem menos que o tamanho MSS padrão de 1460 bytes definidos para o EP. Para o caso do TCP, foi implementado um algoritmo de fragmentação de pacotes e remontagem. O envio de pacotes fragmentados foi feito utilizando um controle de congestionamento com \textit{slow start} e uma janela de envio de crescimento exponencial.
+
 Por fim, embora o programa do simulador não seja uma unidade central controladora das entidades da rede, ela é, todavia, responsável por delegar os comandos da aplicação dos quais cada agente ficará incumbido. Os \textit{hosts} e \textit{routers}, entretanto, são completamente independentes (foram criados como \textit{threads})
 
 \subsection{Experimentos}
@@ -128,6 +131,14 @@ Por fim, embora o programa do simulador não seja uma unidade central controlado
 Os experimentos foram realizados em uma máquina com processador Intel(R) Core(TM) i5-2500K, de 3.30GHz, 8GB de RAM, sistema operacional GNU/Linux (distro Arch) 64-bit, \textit{kernel version} 3.17.2-1.
 
 Três cenários de configuração foram utilizados para os testes. No cenário simples (\textbf{cenario\_simples.txt}), o esquema de distribuição dos nós e endereços é basicamente idêntico ao exemplo do enunciado. Algumas alterações foram empregadas somente no programa de disparos do simulador.
+
+Para um cenário médio, criamos uma rede com oito hosts e quatro roteadores centralizados (sem outras redes dentro de sub-redes). Além disso, criamos tabelas de roteamento grandes para verificar se o experimento provocaria uma demanda maior de processamento.
+
+Para o cenário complexo, utilizamos um arquivo de configuração disponível em \textit{https://github.com/dacortez/NetSimulator/blob/master/complexo.ns}. Fizemos pequenas modificações nessa configuração para adaptá-la ao nosso programa. Trata-se de um modelo mais complexo, com sub-redes dentro de sub-redes, dois roteadores centrais (r2 e r3), seis ao todo, além de 12 hosts.
+
+Como o enunciado do EP3 exigia que as transferências entre hosts demandassem arquivos de pelo menos 500KB, optamos por definir que todas as transferências seriam de um mesmo arquivo \textbf{(file.txt)}. Isso acarretou uma lentidão, talvez inesperada, mas justificável visto os mecanismos de \textit{timeouts}, controle de congestionamento e fragmentação de pacotes.
+
+Os experimentos revelaram que o uso da CPU é praticamente constante dentro do patamar de cada 
 
 Em todos os casos, foi utilizado para fins de medição o programa de console GNU Time. Trata-se de um aplicativo mais sofisticado do que o comando \textit{time} do Bash, já que aquele é capaz de medir não só o tempo de execução de um programa como também seu consumo de processamento em porcentagem.
 

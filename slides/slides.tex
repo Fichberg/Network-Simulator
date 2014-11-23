@@ -263,6 +263,99 @@
 
 \begin{frame}
 	\frametitle{Testes realizados com o simulador}
+	Aqui serão apresentados gráficos dos testes. O valor da barra representado nas imagens é a \textbf{média}.
+	Mais informações podem ser encontradas no arquivo \textbf{testes.txt}. Valores medidos para um intervalo de confiança de 95\%.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Cenário simples - Tempo}
+	\begin{center}
+	\includegraphics[scale=0.18]{chart.png}
+	\end{center}
+	\begin{center}
+	Média = 14.3107
+	\end{center}
+	\begin{center}
+	IC = [14.294149138 ; 14.327250862]
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Cenário simples - CPU}
+	\begin{center}
+	\includegraphics[scale=0.18]{chart(1).png}
+	\end{center}
+	\begin{center}
+	Média = 77.3667
+	\end{center}
+	\begin{center}
+	IC = [77.18370188 ; 77.54969812]
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Cenário intermediário - Tempo}
+	\begin{center}
+	\includegraphics[scale=0.18]{chart(2).png}
+	\end{center}
+	\begin{center}
+	Média = 33.615
+	\end{center}
+	\begin{center}
+	IC = [33.570252673 ; 33.659747327]
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Cenário intermediário - CPU}
+	\begin{center}
+	\includegraphics[scale=0.18]{chart(3).png}
+	\end{center}
+	\begin{center}
+	Média = 85
+	\end{center}
+	\begin{center}
+	IC = [85 ; 85]
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Informações das máquinas do experimento}
+	\begin{itemize}
+		\item Máquina real:
+			\begin{itemize}
+				\item Intel i5 2500K 3.3GHz, 8GB de RAM
+				\item Placa de rede Realtek RTL8111/8168/8411 – 1Gbit/s
+				\item HD Seagate 7200RPM 1TB
+				\item Sistema Operacional: Arch Linux x86\_64 (kernel 3.16.3-1)
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Informações das máquinas do experimento}
+	\begin{itemize}
+		\item Máquina virtual:
+			\begin{itemize}
+				\item 1 processador da máquina hospedeira, 2GB de RAM
+				\item Placa de rede em modo bridge
+				\item Sistema Operacional: Elementary OS x86\_32 (kernel 3.2.0-7)
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Testes realizados com o simulador}
+	\framesubtitle{Análise}
+	\begin{itemize}
+		\item 
+	\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -275,7 +368,8 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Dificuldades encontradas}
+	\frametitle{Dificuldades encontradas e pontos positivos}
+	Dificuldades:
 	\begin{itemize}
 		\item Planejamento: encontrar a estrutura ideal que comporte os seis protocolos requisitados
 		\item Concorrência: encontrar a forma ideal para lidar com todos os pacotes circulando pela rede simultaneamente
@@ -284,11 +378,20 @@
 \end{frame}
 
 \begin{frame}
+	\frametitle{Dificuldades encontradas e pontos positivos}
+	Pontos positivos:
+	\begin{itemize}
+		\item Aprendizado: mais conhecimento sobre o funcionamento das camadas e como elas interagem
+		\item Menos problemas para planejar a estrutura do programa graças a bagagem do EP2
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
 	\frametitle{Conteúdo}
 	\begin{itemize}
 		\item \textcolor{covered}{O simulador: como funciona?}
 		\item \textcolor{covered}{Testes realizados com o simulador}
-		\item \textcolor{covered}{Dificuldades encontradas}
+		\item \textcolor{covered}{Dificuldades encontradas e pontos positivos}
 	\end{itemize}
 \end{frame}
 

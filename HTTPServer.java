@@ -93,7 +93,7 @@ public class HTTPServer extends Agent {
 		{
 			String filename = m.group(1);
 			if (filename.matches("\\s*") || filename == null)
-				filename = "DNSServer.java";
+				filename = "file.txt";
 			return read_file(filename);
 		}
 		else

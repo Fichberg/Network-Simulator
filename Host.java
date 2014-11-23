@@ -293,7 +293,7 @@ public class Host extends Node
 				send_packet(packet);
 				synchronized (this) 
 				{
-					wait(200); //timeout
+					wait(100); //timeout
 				}
 			}
 			while(!got_ACK(ACK));
@@ -344,7 +344,7 @@ public class Host extends Node
 			Iterator<Integer> ack_itr = acks.iterator();
 			synchronized (this) 
 			{
-				wait(200); //timeout
+				wait(100); //timeout
 			}	
 			recebeu = true;
 			while(ack_itr.hasNext())

@@ -74,23 +74,6 @@ public class SimulatorLogger
 	    }
 	}
 
-	void read_from_log()
-	{
-		try
-		{
-	    	FileReader inputFile = new FileReader(this.log_file_name);
-		    BufferedReader bufferReader = new BufferedReader(inputFile);
-		    String line;
-		    while ((line = bufferReader.readLine()) != null)
-         	   System.out.println(line);
-		    bufferReader.close();
-    	}
-    	catch(Exception e)
-    	{
-            System.err.println("Error while reading file: " + e.getMessage());                      
-  	  	}
-	}
-
 	//Cria a mensagem a ser escrita no log do Sniffer
 	private String build_message(Clock clock, Packet packet)
 	{
@@ -172,8 +155,11 @@ public class SimulatorLogger
 		else
 			application_layer = "Application Layer ( )\n\tText Data: ";	
 
-		return packet_id + time_elapsed + sniffer_identification + internet_layer + 
-				transport_layer + application_layer + "\n\n";
+		String message = packet_id + time_elapsed + sniffer_identification + internet_layer 
+			         	+ transport_layer + application_layer + ""
+						+ "\n--------------------------------------------------------\n";
+		System.out.println(message);
+		return message;
 	}
 
 }

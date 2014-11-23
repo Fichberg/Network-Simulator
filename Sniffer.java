@@ -56,10 +56,4 @@ public class Sniffer extends Agent {
 		this.snifferLog.write_to_log(this.clock, packet);
 	}
 
-	//funcao que imprime o conteudo do log deste sniffer no prompt. Esta funcao 
-	//deve rodar apenas ao terminar a aplicacao.
-	public void read_captures()
-	{
-		this.snifferLog.read_from_log();
-	}
 }

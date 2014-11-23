@@ -3,6 +3,10 @@ set h0 [$simulator host]
 set h1 [$simulator host]
 set h2 [$simulator host]
 set h3 [$simulator host]
+set h3 [$simulator host]
+set h3 [$simulator host]
+set h3 [$simulator host]
+
 
 #define os roteadores
 set r0 [$simulator router 3]
@@ -34,15 +38,15 @@ $simulator $r0 performance 100us 0 1000 1 1000 2 1000
 $simulator $r1 performance 20us 0 1000 1 1000 2 1000
 
 #define agentes da camada e aplicação
-set ftpc0 [new Agent/FTPClient]
-set ftpc1 [new Agent/FTPClient]
-set ftps2 [new Agent/FTPServer]
+set httpc0 [new Agent/HTTPClient]
+set httpc1 [new Agent/HTTPClient]
+set https2 [new Agent/HTTPServer]
 set dns3 [new Agent/DNSServer]
 
 #associa agente ao host
-$simulator attach-agent $ftpc0 $h0
-$simulator attach-agent $ftpc1 $h1
-$simulator attach-agent $ftps2 $h2
+$simulator attach-agent $httpc0 $h0
+$simulator attach-agent $httpc1 $h1
+$simulator attach-agent $https2 $h2
 $simulator attach-agent $dns3 $h3
 
 #define sniffers. 
@@ -51,11 +55,11 @@ set sniffer2 [new Agent/Sniffer]
 
 #a leitura dos sniffers deve ser salva nos arquivos temporários
 $simulator attach-agent $sniffer1 $r0.2 $r1.0 "tmp/sniffer1"
-$simulator attach-agent $sniffer2 $h1 $r0.1 "tmp/sniffer2"
+$simulator attach-agent $sniffer2 $h1 $r0.1 ""
 
 #programa principal da simulação: tempo (segs) + ação do agente
-$simulator at 0.5 "ftpc0 USER h2"
-#$simulator at 0.6 "ftpc1 GET 192.168.2.2"
-#$simulator at 0.61 "ftpc1 GET h0"
-$simulator at 0.7 "ftpc0 PUT h2"
+$simulator at 0.5 "httpc0 GET h2"
+$simulator at 0.6 "httpc1 GET 192.168.2.2"
+$simulator at 0.61 "httpc1 GET h0"
+$simulator at 0.7 "httpc0 GET h2"
 $simulator at 4.0 "finish"

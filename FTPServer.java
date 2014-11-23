@@ -1,5 +1,9 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,10 +43,13 @@ public class FTPServer extends Agent {
 	//alerta recebimento de pacote
 	public void notify_agent(Packet packet)
 	{
-		process_packet(packet);
+		if (packet.get_data() != null && packet.get_data().length() > 1)
+			save_file(packet);
+		else
+			process_packet(packet);
 	}
 
-		//processa um pacote recebido do host
+	//processa um pacote recebido do host
 	public void process_packet(Packet packet)
 	{
 		String reply_address = packet.getIP_source();
@@ -50,14 +57,14 @@ public class FTPServer extends Agent {
 		String data = process_FTP_request(app.get_text());
 		
 		//configurando o header FTP
-		String text = FTP_response(data);
+		String text = FTP_response(app.get_text());
 		
 		//configurando camada de aplicação
 		app.set_dest_name(reply_address);
 		app.set_dest_port(app.get_source_port());
 		app.set_source_port(21);
 		app.set_text(text);
-		app.set_length(text.length() + data.length());
+		app.set_length(text.length());
 		
 		//insere dados no pacote
 		Packet app_pack = new Packet();
@@ -76,34 +83,15 @@ public class FTPServer extends Agent {
 		}
 	}
 	
-	//interpreta uma requisição FTP e responde de acordo
+	//interpreta uma requisição FTP por arquivo e responde de acordo
 	private String process_FTP_request(String text)
 	{
-		Pattern p = Pattern.compile("GET FTP");
-		Matcher m = p.matcher(text);
-		Pattern p1 = Pattern.compile("USER FTP");
-		Matcher m1 = p1.matcher(text);
-		Pattern p2 = Pattern.compile("PUT FTP");
-		Matcher m2 = p2.matcher(text);
+		Pattern p  = Pattern.compile("GET FTP");
+		Matcher m  = p.matcher(text);
+
 		if (m.find())
-		{
-			String filename = "index.html";
-			System.out.println("é pra enviar o arquivo " + filename);
-			return read_file(filename);
-		}
-		else if(m1.find())
-		{
-			String username = "USER Anonymous";
-			System.out.println("é para saudar o usuario " + username);
-			return username;
-		}
-		else if(m2.find())
-		{
-			String filename = "file.txt";
-			System.out.println("é pra receber o arquivo " + filename);
-			return read_file(filename);
-		}
-		return null;
+			return read_file("file.txt");
+		return "";
 	}
 	
 	//lê um arquivo do servidor
@@ -126,13 +114,36 @@ public class FTPServer extends Agent {
 		return null;
 	}
 	
+	//salva um arquivo recebido por PUT
+	private void save_file(Packet packet)
+	{
+		File file = new File("ftps_file_received");	
+		try 
+		{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			bw.write(packet.get_data());
+			bw.close();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	//cria o cabeçalho FTP de acordo com os dados requisitados
 	private String FTP_response(String data)
 	{
+		Pattern p1  = Pattern.compile("USER");
+		Matcher m1  = p1.matcher(data);
+		Pattern p2  = Pattern.compile("PUT");
+		Matcher m2  = p2.matcher(data);
+		
 		if (data == null)
 			return "500 Unknown command\r\n";
-		else if (data.startsWith("USER"))
+		else if (m1.find())
 			return "220 Welcome.\r\n";
+		else if (m2.find())
+			return "226 OK\r\n";
 		else
 			return "200 OK\r\n";
 	}

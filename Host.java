@@ -17,7 +17,7 @@ public class Host extends Node
     private int sliding_window;        //tamanho da janela de envio de pacotes
     private boolean in_connection;     //indica se uma conexão TCP foi aberta
     private String assembled;          //guarda dados que estão sendo montados
-    private int data_offset;
+    private int data_offset;           //a partir de que ponto remontar arquivo
 
 	//Construtor
 	public Host(String name)
@@ -214,7 +214,7 @@ public class Host extends Node
 		packet.setApplication(app_pack.getApplication());
 		packet.setTransport(transport_layer);
 		packet.set_data(app_pack.get_data());
-		packet.setLength(transport_layer.getLength() + app_pack.get_data().length()); //+ tamanho do PACKET	
+		packet.setLength(transport_layer.getLength());
 		
 		return packet;
 	}
@@ -238,9 +238,11 @@ public class Host extends Node
 	//envia um pacote TCP de acordo com a política de controle de congestionamento
 	public void send_TCP_packet(Packet app_pack) throws InterruptedException
 	{
+		//faz 3-way-handshake
 		if (!open_connection(app_pack))
 			return;
-		
+
+		//constrói pacote TCP
 		Packet packet = build_TCP_packet(app_pack);
 		if (packet == null)
 			return;
@@ -283,6 +285,7 @@ public class Host extends Node
 			
 			transport.setACK_number(ACK);
 			transport.setSequence_number(1);
+			transport.setFIN(true);
 			packet.setTransport(transport);
 			
 			do
@@ -290,7 +293,7 @@ public class Host extends Node
 				send_packet(packet);
 				synchronized (this) 
 				{
-					wait(200); //timeout
+					wait(100); //timeout
 				}
 			}
 			while(!got_ACK(ACK));
@@ -322,6 +325,7 @@ public class Host extends Node
 	{
 		boolean recebeu = false;
 		ArrayList<Integer> acks = new ArrayList<Integer>();
+		this.sliding_window = 1;
 		
 		for (int curr_packet = 0; curr_packet < packets.length; curr_packet++)
 		{
@@ -352,7 +356,9 @@ public class Host extends Node
 					curr_packet -= this.sliding_window;
 				}
 			}
-		
+			if (curr_packet < -1)
+				curr_packet = -1;
+
 			//dobra o envio de pacotes em caso de sucesso
 			if (recebeu) 
 				this.sliding_window *= 2;
@@ -371,9 +377,7 @@ public class Host extends Node
 		{
 			TCP transport = (TCP) tl;
 			if (transport.isACK())
-			{
-				// this.buffer.remove(packet);
-				
+			{		
 				Packet ack_packet = new Packet("TCP");
 				ack_packet.setIP_source(this.computer_ip);
 				ack_packet.setIP_destination(packet.getIP_source());
@@ -392,7 +396,7 @@ public class Host extends Node
 				ack_transport.setACK_number(next_offset);
 				if (transport.isFIN())
 					ack_transport.setFIN(true);
-				
+								
 				ack_packet.setTransport(ack_transport);
 				send_packet(ack_packet);
 			}
@@ -429,14 +433,14 @@ public class Host extends Node
 		}
 	}
 	
-	//monta um pacote que veio fragmentado
+	//monta um pacote que veio fragmentado. Retorna true se terminou a montagem
 	private void assembly_packet(Packet packet)
 	{
 		if (packet.getTransport() instanceof TCP)
 		{
 			TCP transport = (TCP) packet.getTransport();
 			
-			//detectando pacote fragmentado
+			//detectando pacote possivelmente fragmentado
 			if (transport.isACK() && (transport.getACK_number() > 1))
 			{
 				//verifica se o pacote recebido veio na ordem correta
@@ -447,18 +451,18 @@ public class Host extends Node
 				reply_if_isACK(packet);
 				this.assembled += packet.get_data();
 				
-				if (transport.isFIN())
+				if (transport.isFIN() && packet.getApplication() != null)
 				{
 					packet.set_data(this.assembled);
 					packet.setLength(this.assembled.length());
 					this.assembled = "";
 					this.data_offset = 1;
-					this.agent.notify_agent(packet);
+					if (!packet.getApplication().get_text().startsWith("226")) //PUT nope
+						this.agent.notify_agent(packet);
 				}
 					
 			}
 		}
-		
 	}
 	
 	//==============================================

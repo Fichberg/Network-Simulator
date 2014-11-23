@@ -62,7 +62,7 @@ public class HTTPServer extends Agent {
 		app.set_dest_port(app.get_source_port());
 		app.set_source_port(80);
 		app.set_text(text);
-		app.set_length(text.length() + data.length());
+		app.set_length(text.length());
 		
 		//insere dados no pacote
 		Packet app_pack = new Packet();
@@ -93,7 +93,7 @@ public class HTTPServer extends Agent {
 		{
 			String filename = m.group(1);
 			if (filename.matches("\\s*") || filename == null)
-				filename = "index.html";
+				filename = "file.txt";
 			return read_file(filename);
 		}
 		else
